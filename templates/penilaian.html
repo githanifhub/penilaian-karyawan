@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Matriks Penilaian - Perfomax{% endblock %}
+{% block page_heading %}Matriks Penilaian Alternatif{% endblock %}
+{% block page_subheading %}Input dan perbarui nilai kinerja karyawan untuk setiap parameter kriteria evaluasi{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('hasil') }}" class="btn btn-primary btn-sm">
+    <i class="fa-solid fa-trophy"></i> Lihat Hasil & Peringkat
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="flex-wrap: wrap; gap: 14px;">
+        <div>
+            <h3>
+                <i class="fa-solid fa-table-cells" style="color: var(--cyan-accent);"></i> 
+                Form Input & Penilaian Kinerja
+            </h3>
+            <p>Skala nilai yang disarankan: <strong>1 - 100</strong>. Perubahan nilai akan langsung memperbarui peringkat kinerja karyawan.</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <span class="badge" style="background: rgba(26, 159, 255, 0.15); color: var(--cyan-accent); border: 1px solid rgba(102, 192, 244, 0.3); font-size: 0.8rem; padding: 6px 12px;">
+                <i class="fa-solid fa-users"></i> {{ karyawan_list|length }} Alternatif &bull; {{ kriteria_list|length }} Kriteria
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Live Filter Toolbar (Crucial for 300+ Employees) -->
+    <div style="background: #111a26; padding: 14px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="position: relative; flex: 1; min-width: 260px; max-width: 440px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.88rem;"></i>
+            <input 
+                type="text" 
+                id="searchKaryawanInput" 
+                class="form-control" 
+                placeholder="Cari NIP, nama karyawan, atau divisi..." 
+                style="padding-left: 38px; height: 38px; font-size: 0.85rem;"
+                onkeyup="filterPenilaianTable()"
+            >
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterByRole('all')" id="btnFilterAll">Semua</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterByRole('atasan')" id="btnFilterAtasan">
+                <i class="fa-solid fa-user-tie" style="color: var(--purple-atasan);"></i> Atasan
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterByRole('karyawan')" id="btnFilterKaryawan">
+                <i class="fa-solid fa-user" style="color: var(--cyan-accent);"></i> Staff
+            </button>
+            <span id="matchCounter" style="font-size: 0.78rem; color: var(--text-muted); margin-left: 6px;"></span>
+        </div>
+    </div>
+
+    <div class="card-body" style="padding: 0;">
+        {% if karyawan_list and kriteria_list %}
+            <form action="{{ url_for('simpan_penilaian') }}" method="POST" id="formPenilaian">
+                <div class="table-responsive" style="max-height: 580px; overflow-y: auto;">
+                    <table class="table-custom" id="tablePenilaian">
+                        <thead style="position: sticky; top: 0; z-index: 10; background: #131c28;">
+                            <tr>
+                                <th style="width: 50px; text-align: center;">No</th>
+                                <th style="min-width: 220px;">Alternatif / Karyawan</th>
+                                {% for krit in kriteria_list %}
+                                <th style="text-align: center; min-width: 130px;">
+                                    <div style="font-weight: 800; color: var(--cyan-accent); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">{{ krit.kode }}</div>
+                                    <div style="font-size: 0.72rem; text-transform: none; color: #cbd5e1; font-weight: 500; margin: 2px 0;">{{ krit.nama }}</div>
+                                    <div>
+                                        {% if krit.tipe == 'benefit' %}
+                                            <span class="badge badge-benefit" style="font-size: 0.65rem; padding: 2px 6px;">
+                                                <i class="fa-solid fa-arrow-trend-up"></i> Benefit
+                                            </span>
+                                        {% else %}
+                                            <span class="badge badge-cost" style="font-size: 0.65rem; padding: 2px 6px;">
+                                                <i class="fa-solid fa-arrow-trend-down"></i> Cost
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for emp in karyawan_list %}
+                            <tr class="penilaian-row" data-role="{{ emp.role }}" data-search="{{ emp.nik|lower }} {{ emp.nama|lower }} {{ emp.jabatan|lower }} {{ emp.divisi|lower }}">
+                                <td style="text-align: center; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                                    {{ loop.index }}
+                                </td>
+                                <td>
+                                    <div style="font-weight: 700; color: #ffffff; font-size: 0.9rem;">{{ emp.nama }}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1px;">
+                                        <span style="font-family: 'JetBrains Mono', monospace; color: var(--cyan-accent);">{{ emp.nik }}</span> &bull; 
+                                        <span>{{ emp.jabatan }}</span>
+                                    </div>
+                                    <div style="margin-top: 3px;">
+                                        {% if emp.role == 'atasan' %}
+                                        <span class="badge" style="background: var(--purple-bg); color: var(--purple-atasan); border-color: var(--purple-border); font-size: 0.65rem; padding: 1px 6px;">Atasan</span>
+                                        {% else %}
+                                        <span class="badge" style="background: rgba(26, 159, 255, 0.1); color: var(--cyan-accent); border-color: rgba(102, 192, 244, 0.25); font-size: 0.65rem; padding: 1px 6px;">Staff</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                {% for krit in kriteria_list %}
+                                <td style="text-align: center;">
+                                    <input 
+                                        type="number" 
+                                        step="any" 
+                                        min="0"
+                                        name="nilai_{{ emp.id }}_{{ krit.id }}" 
+                                        value="{{ matriks_nilai[emp.id][krit.id] if emp.id in matriks_nilai and krit.id in matriks_nilai[emp.id] else 0 }}" 
+                                        class="form-control" 
+                                        style="text-align: center; max-width: 90px; margin: 0 auto; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--cyan-accent); font-size: 0.9rem; padding: 6px 8px;"
+                                        required
+                                    >
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sticky Bottom Action Bar -->
+                <div style="padding: 16px 24px; background: #111a24; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div style="color: var(--text-muted); font-size: 0.82rem;">
+                        <i class="fa-solid fa-circle-info" style="color: var(--cyan-accent); margin-right: 6px;"></i>
+                        Nilai tersimpan langsung digunakan untuk menghitung peringkat kinerja karyawan.
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-success" style="padding: 9px 22px; font-weight: 700;">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Seluruh Penilaian
+                        </button>
+                    </div>
+                </div>
+            </form>
+        {% else %}
+            <div style="text-align: center; padding: 48px; color: var(--text-muted);">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; margin-bottom: 12px; color: #fbbf24;"></i>
+                <h4 style="color: #ffffff;">Data Belum Siap</h4>
+                <p>Data Karyawan atau Kriteria belum lengkap. Pastikan kedua master data sudah diisi.</p>
+                <div style="margin-top: 16px; display: flex; gap: 12px; justify-content: center;">
+                    <a href="{{ url_for('karyawan') }}" class="btn btn-secondary btn-sm">Ke Data Karyawan</a>
+                    <a href="{{ url_for('kriteria') }}" class="btn btn-secondary btn-sm">Ke Data Kriteria</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentRoleFilter = 'all';
+
+    function filterPenilaianTable() {
+        const query = document.getElementById('searchKaryawanInput').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.penilaian-row');
+        let matched = 0;
+
+        rows.forEach(row => {
+            const rowText = row.getAttribute('data-search') || '';
+            const rowRole = row.getAttribute('data-role') || '';
+            const matchQuery = query === '' || rowText.includes(query);
+            const matchRole = currentRoleFilter === 'all' || rowRole === currentRoleFilter;
+
+            if (matchQuery && matchRole) {
+                row.style.display = '';
+                matched++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        const counter = document.getElementById('matchCounter');
+        if (query !== '' || currentRoleFilter !== 'all') {
+            counter.textContent = `(${matched} ditemukan)`;
+        } else {
+            counter.textContent = '';
+        }
+    }
+
+    function filterByRole(role) {
+        currentRoleFilter = role;
+        document.getElementById('btnFilterAll').className = role === 'all' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+        document.getElementById('btnFilterAtasan').className = role === 'atasan' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+        document.getElementById('btnFilterKaryawan').className = role === 'karyawan' ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+        filterPenilaianTable();
+    }
+</script>
+{% endblock %}

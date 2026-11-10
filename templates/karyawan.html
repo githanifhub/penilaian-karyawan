@@ -1,0 +1,632 @@
+{% extends 'base.html' %}
+
+{% block title %}Data Karyawan - Perfomax{% endblock %}
+{% block page_heading %}Manajemen Data Karyawan{% endblock %}
+{% block page_subheading %}Kelola data alternatif karyawan yang akan dinilai kinerjanya beserta pembuatan akun login{% endblock %}
+
+{% block topbar_actions %}
+<div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    {% if session.get('role') == 'admin' %}
+    <button type="button" class="btn btn-sm" onclick="openModal('modalGenerateAkun')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; font-weight: 700; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);">
+        <i class="fa-solid fa-key"></i> Buat Akun Login
+    </button>
+    <button type="button" class="btn btn-success btn-sm" onclick="openModal('modalImportExcel')">
+        <i class="fa-solid fa-file-arrow-up"></i> Import CSV / Excel (300 Baris)
+    </button>
+    <a href="{{ url_for('template_csv') }}" class="btn btn-secondary btn-sm" title="Unduh format spreadsheet CSV">
+        <i class="fa-solid fa-file-csv" style="color: #66c0f4;"></i> Template CSV
+    </a>
+    <a href="{{ url_for('template_karyawan') }}" class="btn btn-secondary btn-sm" title="Unduh format spreadsheet Excel">
+        <i class="fa-solid fa-file-excel" style="color: #3dd68c;"></i> Template Excel
+    </a>
+    <a href="{{ url_for('export_karyawan') }}" class="btn btn-secondary btn-sm" title="Ekspor seluruh data karyawan ke Excel">
+        <i class="fa-solid fa-file-export"></i> Export Excel
+    </a>
+    <button type="button" class="btn btn-primary btn-sm" onclick="openModal('modalTambahKaryawan')">
+        <i class="fa-solid fa-user-plus"></i> Tambah Karyawan
+    </button>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h3><i class="fa-solid fa-users" style="color: var(--primary);"></i> Daftar Karyawan (Alternatif)</h3>
+            <p>Total terdaftar: <strong style="color: #ffffff;">{{ karyawan_list|length }}</strong> karyawan</p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            {% set total_atasan = karyawan_list|selectattr('role', 'equalto', 'atasan')|list|length %}
+            <span class="badge badge-atasan" style="font-size: 0.8rem; padding: 6px 12px;">
+                <i class="fa-solid fa-user-tie"></i> {{ total_atasan }} Atasan
+            </span>
+            <span class="badge badge-karyawan" style="font-size: 0.8rem; padding: 6px 12px;">
+                <i class="fa-solid fa-user"></i> {{ (karyawan_list|length) - total_atasan }} Karyawan
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Live Filter Toolbar (Crucial for 300+ Employees) -->
+    <div style="background: #111a26; padding: 14px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="position: relative; flex: 1; min-width: 260px; max-width: 440px;">
+            <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.88rem;"></i>
+            <input 
+                type="text" 
+                id="searchKaryawanTableInput" 
+                class="form-control" 
+                placeholder="Cari NIP, nama karyawan, jabatan, atau divisi..." 
+                style="padding-left: 38px; height: 38px; font-size: 0.85rem;"
+                onkeyup="filterKaryawanTable()"
+            >
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterKaryawanRole('all')" id="btnRoleAll" style="border-color: var(--cyan-accent); color: var(--cyan-accent);">
+                Semua Role
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterKaryawanRole('atasan')" id="btnRoleAtasan">
+                <i class="fa-solid fa-user-tie" style="color: var(--purple-atasan);"></i> Atasan
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="filterKaryawanRole('karyawan')" id="btnRoleKaryawan">
+                <i class="fa-solid fa-user" style="color: var(--cyan-accent);"></i> Staff
+            </button>
+            <select id="filterStatusAkun" class="form-select" style="width: auto; padding: 6px 12px; font-size: 0.78rem; height: 32px;" onchange="filterKaryawanTable()">
+                <option value="all">Semua Status Akun</option>
+                <option value="aktif">Akun Aktif</option>
+                <option value="belum_ganti">Belum Ganti Password</option>
+                <option value="belum_ada">Belum Ada Akun</option>
+            </select>
+            <span id="counterKaryawan" style="font-size: 0.78rem; color: var(--text-muted); margin-left: 6px;"></span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        {% if karyawan_list %}
+            <div class="table-responsive">
+                <table class="table-custom" id="tabelDataKaryawan">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>NIP / NIK</th>
+                            <th>Nama Lengkap</th>
+                            <th>Jabatan</th>
+                            <th>Divisi</th>
+                            <th style="text-align: center;">Role</th>
+                            <th style="text-align: center;">Status Akun</th>
+                            {% if session.get('role') == 'admin' %}
+                            <th style="text-align: center; width: 130px;">Aksi</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in karyawan_list %}
+                        <tr class="karyawan-row" data-role="{{ emp.role }}" data-status="{% if emp.user %}{% if emp.user.must_change_password %}belum_ganti{% else %}aktif{% endif %}{% else %}belum_ada{% endif %}">
+                            <td class="row-no">{{ loop.index }}</td>
+                            <td><span style="font-weight: 700; color: var(--primary-light); font-family: 'JetBrains Mono', monospace;">{{ emp.nik }}</span></td>
+                            <td style="font-weight: 600; color: #ffffff;">{{ emp.nama }}</td>
+                            <td>{{ emp.jabatan }}</td>
+                            <td><span class="badge" style="background: rgba(26, 159, 255, 0.12); color: #66c0f4; border: 1px solid rgba(26, 159, 255, 0.25);">{{ emp.divisi }}</span></td>
+                            <td style="text-align: center;">
+                                {% if emp.role == 'atasan' %}
+                                    <span class="badge badge-atasan">
+                                        <i class="fa-solid fa-user-tie"></i> Atasan
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-karyawan">
+                                        <i class="fa-solid fa-user"></i> Karyawan
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">
+                                {% if emp.user %}
+                                    {% if emp.user.must_change_password %}
+                                    <span class="badge badge-must-change" title="Akun aktif, wajib ganti password pada login pertama">
+                                        <i class="fa-solid fa-key"></i> Belum Ganti PW
+                                    </span>
+                                    {% else %}
+                                    <span class="badge badge-aktif" title="Akun aktif dan password sudah diperbarui">
+                                        <i class="fa-solid fa-circle-check"></i> Akun Aktif
+                                    </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid #334155;" title="Belum memiliki akun login">
+                                        <i class="fa-solid fa-circle-xmark"></i> Belum ada akun
+                                    </span>
+                                {% endif %}
+                            </td>
+                            {% if session.get('role') == 'admin' %}
+                            <td style="text-align: center;">
+                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <button class="btn btn-secondary btn-sm" onclick="bukaModalEdit('{{ emp.id }}', '{{ emp.nik }}', '{{ emp.nama }}', '{{ emp.jabatan }}', '{{ emp.divisi }}', '{{ emp.role }}')" title="Edit Data Karyawan">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <form action="{{ url_for('hapus_karyawan', id=emp.id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data karyawan {{ emp.nama }}? Nilai penilaian dan akun login juga akan terhapus.');" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus Karyawan">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        <tr id="noResultsKaryawanRow" style="display: none;">
+                            <td colspan="8" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">
+                                <i class="fa-solid fa-user-xmark" style="font-size: 2.2rem; color: #2b425b; margin-bottom: 10px; display: block;"></i>
+                                <span style="font-size: 0.95rem; font-weight: 600; color: #ffffff;">Tidak ada karyawan yang cocok dengan pencarian</span>
+                                <p style="font-size: 0.8rem; margin: 4px 0 0; color: #8ba2b9;">Coba gunakan kata kunci NIP, nama, atau filter lain yang berbeda.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 48px; color: var(--text-muted);">
+                <i class="fa-solid fa-user-slash" style="font-size: 3rem; margin-bottom: 14px; color: #22354a;"></i>
+                <p>Belum ada data karyawan. Silakan import file CSV atau klik tombol <strong>Tambah Karyawan</strong> di atas.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal 1: Generate Akun Login (Atasan vs Semua) -->
+<div class="modal-overlay" id="modalGenerateAkun">
+    <div class="modal-content" style="max-width: 560px;">
+        <form action="{{ url_for('generate_akun') }}" method="POST">
+            <div class="modal-header">
+                <h4><i class="fa-solid fa-key" style="color: #fbbf24; margin-right: 8px;"></i> Buat Akun Login Pengguna</h4>
+                <button type="button" class="modal-close" onclick="closeModal('modalGenerateAkun')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <p style="font-size: 0.88rem; color: #8ba2b9; margin-top: 0;">
+                    Sistem akan membuatkan akun login secara otomatis menggunakan <strong>NIP sebagai Username</strong> dan meng-generate <strong>Password Awal yang acak & aman</strong>.
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight: 700; color: #ffffff;">Pilih Target Pembuatan Akun:</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+                        <label style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: #101924;" id="labelOptionAtasan">
+                            <input type="radio" name="target_role" value="atasan" checked style="margin-top: 3px;">
+                            <div>
+                                <strong style="color: #c084fc; font-size: 0.95rem;"><i class="fa-solid fa-user-tie"></i> Buat akun untuk role Atasan</strong>
+                                <p style="font-size: 0.8rem; color: #8ba2b9; margin: 3px 0 0;">
+                                    Hanya membuat akun bagi karyawan yang memiliki role <strong>Atasan</strong> (Penilai kinerja).
+                                </p>
+                            </div>
+                        </label>
+
+                        <label style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: #101924;" id="labelOptionSemua">
+                            <input type="radio" name="target_role" value="semua" style="margin-top: 3px;">
+                            <div>
+                                <strong style="color: var(--primary-light); font-size: 0.95rem;"><i class="fa-solid fa-users"></i> Buat akun semua (Seluruh Karyawan & Atasan)</strong>
+                                <p style="font-size: 0.8rem; color: #8ba2b9; margin: 3px 0 0;">
+                                    Membuat akun untuk seluruh karyawan yang ada di database (baik Atasan maupun Staff).
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px; padding: 12px 14px; background: #101924; border-radius: 8px; border: 1px solid var(--border);">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-size: 0.85rem; color: #dcdedf;">
+                        <input type="checkbox" name="lewati_ada" value="1" checked>
+                        <span>Hanya buatkan untuk yang <strong>belum memiliki akun</strong> (Lewati yang sudah punya akun)</span>
+                    </label>
+                </div>
+
+                <div class="alert alert-warning" style="margin-top: 16px; font-size: 0.82rem; padding: 10px 14px;">
+                    <i class="fa-solid fa-circle-exclamation" style="margin-right: 6px;"></i>
+                    <span><strong>Catatan:</strong> Daftar password awal hanya akan <strong>ditampilkan sekali</strong> setelah proses ini selesai. Segera unduh file CSV/Excel yang disediakan.</span>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 14px 24px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalGenerateAkun')">Batal</button>
+                <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; font-weight: 700;">
+                    <i class="fa-solid fa-key"></i> Proses & Generate Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Tambah Karyawan Baru -->
+<div class="modal-overlay" id="modalTambahKaryawan">
+    <div class="modal-content">
+        <form action="{{ url_for('tambah_karyawan') }}" method="POST">
+            <div class="modal-header">
+                <h4><i class="fa-solid fa-user-plus" style="color: var(--primary); margin-right: 8px;"></i> Tambah Karyawan Baru</h4>
+                <button type="button" class="modal-close" onclick="closeModal('modalTambahKaryawan')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nomor Induk Pegawai / Karyawan (NIP/NIK)</label>
+                    <input type="text" name="nik" class="form-control" placeholder="Contoh: EMP001 atau 198501012020..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" name="nama" class="form-control" placeholder="Masukkan nama lengkap karyawan" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" name="jabatan" class="form-control" placeholder="Contoh: Staff IT / Manager" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Divisi / Departemen</label>
+                        <input type="text" name="divisi" class="form-control" placeholder="Contoh: IT & Development" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role Akun</label>
+                    <select name="role" class="form-select" required>
+                        <option value="karyawan">Karyawan (Staff Biasa)</option>
+                        <option value="atasan">Atasan (Penilai Kinerja / Supervisor / Manager)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalTambahKaryawan')">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Simpan Karyawan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 3: Edit Karyawan -->
+<div class="modal-overlay" id="modalEditKaryawan">
+    <div class="modal-content">
+        <form id="formEditKaryawan" method="POST">
+            <div class="modal-header">
+                <h4><i class="fa-solid fa-pen-to-square" style="color: var(--primary); margin-right: 8px;"></i> Edit Data Karyawan</h4>
+                <button type="button" class="modal-close" onclick="closeModal('modalEditKaryawan')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">NIP / NIK</label>
+                    <input type="text" id="editNik" name="nik" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" id="editNama" name="nama" class="form-control" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" id="editJabatan" name="jabatan" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Divisi</label>
+                        <input type="text" id="editDivisi" name="divisi" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role Akun</label>
+                    <select id="editRole" name="role" class="form-select" required>
+                        <option value="karyawan">Karyawan (Staff Biasa)</option>
+                        <option value="atasan">Atasan (Penilai Kinerja / Manager)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalEditKaryawan')">Batal</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Perbarui Data</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 4: Import CSV / Excel (Support 300+ Baris Sekaligus) -->
+<div class="modal-overlay" id="modalImportExcel">
+    <div class="modal-content" style="max-width: 920px; width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+        <form id="formImportExcel" action="{{ url_for('import_karyawan') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; height: 100%; overflow: hidden;">
+            <div class="modal-header">
+                <h4><i class="fa-solid fa-file-csv" style="color: #2563eb; margin-right: 8px;"></i> Import Massal Karyawan (CSV / Excel 300+ Baris)</h4>
+                <button type="button" class="modal-close" onclick="closeModal('modalImportExcel')">&times;</button>
+            </div>
+            
+            <div class="modal-body" style="overflow-y: auto; flex: 1; padding: 20px 24px;">
+                <div class="info-box" style="padding: 14px 18px; margin-bottom: 16px; background: rgba(26, 159, 255, 0.08); border: 1px solid rgba(26, 159, 255, 0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <strong style="font-size: 0.88rem; color: #66c0f4;">
+                                <i class="fa-solid fa-circle-info"></i> Petunjuk Import CSV / Excel:
+                            </strong>
+                            <p style="font-size: 0.8rem; margin: 3px 0 0; color: #8ba2b9;">
+                                Mendukung hingga 300+ baris data sekaligus. Kolom wajib: <strong>NIP, Nama Lengkap, Jabatan, Divisi, Role</strong> (opsional: nilai kriteria C1, C2, dll).
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <a href="{{ url_for('template_csv') }}" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">
+                                <i class="fa-solid fa-file-csv" style="color: #66c0f4;"></i> Template CSV
+                            </a>
+                            <a href="{{ url_for('template_karyawan') }}" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">
+                                <i class="fa-solid fa-file-excel" style="color: #3dd68c;"></i> Template Excel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input File & Tombol Preview -->
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label">Pilih File Spreadsheet (.csv / .xlsx / .xls)</label>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input type="file" id="inputExcelFile" name="file_excel" accept=".csv, .xlsx, .xls" class="form-control" style="padding: 9px; flex: 1; min-width: 240px;" onchange="resetPreviewState()" required>
+                        <button type="button" class="btn btn-primary" id="btnProsesPreview" onclick="prosesPreviewExcel()">
+                            <i class="fa-solid fa-magnifying-glass"></i> Preview Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alert Box untuk Notifikasi / Error Preview -->
+                <div id="previewAlert" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 14px;"></div>
+
+                <!-- Area Preview Tabel Data -->
+                <div id="previewContainer" style="display: none; border-top: 1px solid var(--border); padding-top: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="font-size: 0.95rem; font-weight: 700; color: #ffffff; margin: 0;">
+                                <i class="fa-solid fa-table-list" style="color: var(--primary); margin-right: 6px;"></i> Pratinjau Isi Data File:
+                            </h4>
+                            <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0;">
+                                Menampilkan pratinjau data sebelum disimpan secara massal ke database.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="badge" id="previewPillTotal" style="background: #101924; color: #8ba2b9; border: 1px solid #22354a; font-size: 0.8rem; padding: 5px 10px;">0 Data</span>
+                            <span class="badge" id="previewPillBaru" style="background: rgba(61, 214, 140, 0.15); color: #3dd68c; border: 1px solid rgba(61, 214, 140, 0.35); font-size: 0.8rem; padding: 5px 10px;">0 Baru</span>
+                            <span class="badge" id="previewPillUpdate" style="background: rgba(26, 159, 255, 0.15); color: #66c0f4; border: 1px solid rgba(26, 159, 255, 0.35); font-size: 0.8rem; padding: 5px 10px;">0 Update</span>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Table -->
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px;">
+                        <table class="table-custom" style="margin: 0; font-size: 0.82rem;">
+                            <thead style="position: sticky; top: 0; z-index: 2; background: #172433;">
+                                <tr id="previewTableHead">
+                                    <th style="width: 40px;">No</th>
+                                    <th>Status</th>
+                                    <th>NIP</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Jabatan</th>
+                                    <th>Divisi</th>
+                                    <th>Role</th>
+                                    <!-- Dynamic criteria columns will be appended here -->
+                                </tr>
+                            </thead>
+                            <tbody id="previewTableBody">
+                                <!-- Dynamic rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding: 14px 24px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('modalImportExcel')">Batal</button>
+                <button type="submit" class="btn btn-success" id="btnSubmitUpload" style="opacity: 0.6; cursor: not-allowed;" disabled>
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Konfirmasi & Simpan ke Database
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentRoleFilter = 'all';
+
+    function filterKaryawanRole(role) {
+        currentRoleFilter = role;
+        
+        const btnAll = document.getElementById('btnRoleAll');
+        const btnAtasan = document.getElementById('btnRoleAtasan');
+        const btnKaryawan = document.getElementById('btnRoleKaryawan');
+
+        if (btnAll && btnAtasan && btnKaryawan) {
+            btnAll.style.borderColor = role === 'all' ? 'var(--cyan-accent)' : 'transparent';
+            btnAll.style.color = role === 'all' ? 'var(--cyan-accent)' : '#d1dce5';
+            
+            btnAtasan.style.borderColor = role === 'atasan' ? 'var(--purple-atasan)' : 'transparent';
+            btnAtasan.style.color = role === 'atasan' ? 'var(--purple-atasan)' : '#d1dce5';
+            
+            btnKaryawan.style.borderColor = role === 'karyawan' ? 'var(--cyan-accent)' : 'transparent';
+            btnKaryawan.style.color = role === 'karyawan' ? 'var(--cyan-accent)' : '#d1dce5';
+        }
+
+        filterKaryawanTable();
+    }
+
+    function filterKaryawanTable() {
+        const query = (document.getElementById('searchKaryawanTableInput')?.value || '').toLowerCase().trim();
+        const statusFilter = document.getElementById('filterStatusAkun')?.value || 'all';
+        const rows = document.querySelectorAll('.karyawan-row');
+        const noResults = document.getElementById('noResultsKaryawanRow');
+        const counter = document.getElementById('counterKaryawan');
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rowRole = row.getAttribute('data-role') || '';
+            const rowStatus = row.getAttribute('data-status') || '';
+            const textContent = row.textContent.toLowerCase();
+
+            const matchesQuery = !query || textContent.includes(query);
+            const matchesRole = currentRoleFilter === 'all' || rowRole === currentRoleFilter;
+            const matchesStatus = statusFilter === 'all' || rowStatus === statusFilter;
+
+            if (matchesQuery && matchesRole && matchesStatus) {
+                row.style.display = '';
+                visibleCount++;
+                const noCell = row.querySelector('.row-no');
+                if (noCell) noCell.textContent = visibleCount;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (noResults) {
+            noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        if (counter) {
+            counter.textContent = `Menampilkan ${visibleCount} dari ${rows.length} karyawan`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        filterKaryawanTable();
+    });
+
+    function bukaModalEdit(id, nik, nama, jabatan, divisi, role) {
+        document.getElementById('formEditKaryawan').action = '/karyawan/edit/' + id;
+        document.getElementById('editNik').value = nik;
+        document.getElementById('editNama').value = nama;
+        document.getElementById('editJabatan').value = jabatan;
+        document.getElementById('editDivisi').value = divisi;
+        document.getElementById('editRole').value = role || 'karyawan';
+        openModal('modalEditKaryawan');
+    }
+
+    function resetPreviewState() {
+        const previewContainer = document.getElementById('previewContainer');
+        const previewAlert = document.getElementById('previewAlert');
+        const btnSubmit = document.getElementById('btnSubmitUpload');
+        
+        previewContainer.style.display = 'none';
+        previewAlert.style.display = 'none';
+        btnSubmit.disabled = true;
+        btnSubmit.style.opacity = '0.6';
+        btnSubmit.style.cursor = 'not-allowed';
+    }
+
+    async function prosesPreviewExcel() {
+        const fileInput = document.getElementById('inputExcelFile');
+        const alertBox = document.getElementById('previewAlert');
+        const previewContainer = document.getElementById('previewContainer');
+        const btnPreview = document.getElementById('btnProsesPreview');
+        const btnSubmit = document.getElementById('btnSubmitUpload');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = '#fef2f2';
+            alertBox.style.color = '#991b1b';
+            alertBox.style.border = '1px solid #fecaca';
+            alertBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Harap pilih file CSV atau Excel terlebih dahulu!';
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file_excel', file);
+
+        // UI Loading
+        const originalBtnText = btnPreview.innerHTML;
+        btnPreview.disabled = true;
+        btnPreview.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membaca data...';
+        alertBox.style.display = 'none';
+
+        try {
+            const response = await fetch('/karyawan/preview-import', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                alertBox.style.display = 'block';
+                alertBox.style.background = '#fef2f2';
+                alertBox.style.color = '#991b1b';
+                alertBox.style.border = '1px solid #fecaca';
+                alertBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${result.message}`;
+                previewContainer.style.display = 'none';
+                btnSubmit.disabled = true;
+                btnSubmit.style.opacity = '0.6';
+                btnSubmit.style.cursor = 'not-allowed';
+            } else {
+                alertBox.style.display = 'block';
+                alertBox.style.background = '#ecfdf5';
+                alertBox.style.color = '#065f46';
+                alertBox.style.border = '1px solid #a7f3d0';
+                alertBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> File berhasil diproses: <strong>${result.total} baris data ditemukan</strong> (${result.baru} data baru, ${result.update} data update).`;
+
+                document.getElementById('previewPillTotal').textContent = `${result.total} Total Karyawan`;
+                document.getElementById('previewPillBaru').textContent = `${result.baru} Data Baru`;
+                document.getElementById('previewPillUpdate').textContent = `${result.update} Data Update`;
+
+                const theadTr = document.getElementById('previewTableHead');
+                theadTr.innerHTML = `
+                    <th style="width: 40px;">No</th>
+                    <th>Status</th>
+                    <th>NIP</th>
+                    <th>Nama Lengkap</th>
+                    <th>Jabatan</th>
+                    <th>Divisi</th>
+                    <th>Role</th>
+                `;
+
+                if (result.kriteria && result.kriteria.length > 0) {
+                    result.kriteria.forEach(k => {
+                        const th = document.createElement('th');
+                        th.style.textAlign = 'center';
+                        th.textContent = k.kode;
+                        th.title = `${k.kode}: ${k.nama}`;
+                        theadTr.appendChild(th);
+                    });
+                }
+
+                const tbody = document.getElementById('previewTableBody');
+                tbody.innerHTML = '';
+
+                result.rows.forEach(r => {
+                    const tr = document.createElement('tr');
+                    
+                    const statusBadge = r.status === 'baru' 
+                        ? '<span class="badge" style="background:rgba(61, 214, 140, 0.15); color:#3dd68c; border:1px solid rgba(61,214,140,0.3); font-size:0.7rem;">Baru</span>'
+                        : '<span class="badge" style="background:rgba(26, 159, 255, 0.15); color:#66c0f4; border:1px solid rgba(26,159,255,0.3); font-size:0.7rem;">Update</span>';
+
+                    const roleBadge = r.role === 'atasan'
+                        ? '<span class="badge badge-atasan" style="font-size:0.7rem;">Atasan</span>'
+                        : '<span class="badge badge-karyawan" style="font-size:0.7rem;">Karyawan</span>';
+
+                    let rowHtml = `
+                        <td>${r.no}</td>
+                        <td>${statusBadge}</td>
+                        <td><strong style="color:var(--primary-light); font-family:monospace;">${r.nik}</strong></td>
+                        <td style="font-weight:600; color:#ffffff;">${r.nama}</td>
+                        <td>${r.jabatan}</td>
+                        <td>${r.divisi}</td>
+                        <td>${roleBadge}</td>
+                    `;
+
+                    if (result.kriteria && result.kriteria.length > 0) {
+                        result.kriteria.forEach(k => {
+                            const val = r.scores && r.scores[k.kode] !== undefined ? r.scores[k.kode] : '-';
+                            rowHtml += `<td style="text-align:center; font-weight:600; color:var(--primary);">${val}</td>`;
+                        });
+                    }
+
+                    tr.innerHTML = rowHtml;
+                    tbody.appendChild(tr);
+                });
+
+                previewContainer.style.display = 'block';
+
+                btnSubmit.disabled = false;
+                btnSubmit.style.opacity = '1';
+                btnSubmit.style.cursor = 'pointer';
+            }
+        } catch (err) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+            alertBox.style.color = '#fca5a5';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.35)';
+            alertBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Gagal memproses file: ${err.message}`;
+        } finally {
+            btnPreview.disabled = false;
+            btnPreview.innerHTML = originalBtnText;
+        }
+    }
+</script>
+{% endblock %}

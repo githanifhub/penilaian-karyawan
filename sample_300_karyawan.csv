@@ -1,0 +1,301 @@
+NIP,Nama Lengkap,Jabatan,Divisi,Role,C1,C2,C3,C4,C5
+EMP0001,Gilang Wijaya,Content Strategist,Product & Design,Karyawan,82,82,80,12,89
+EMP0002,Bagus Syahputra,Automation Engineer,Marketing & Sales,Karyawan,76,86,95,15,87
+EMP0003,Dewi Saputra,SEO Specialist,Quality Assurance,Karyawan,98,81,86,13,81
+EMP0004,Joko Permana,Recruitment Specialist,IT & Development,Karyawan,84,95,76,5,85
+EMP0005,Farhan Syahputra,Helpdesk Specialist,Product & Design,Karyawan,76,94,78,12,76
+EMP0006,Zulfa Hidayat,SEO Specialist,Human Resources (HRD),Karyawan,80,86,84,10,86
+EMP0007,Budi Wahyudi,Marketing Lead,Human Resources (HRD),Atasan,92,73,73,10,71
+EMP0008,Lukman Hidayat,Data Entry Staff,Operations & Logistik,Karyawan,98,94,76,2,72
+EMP0009,Lukman Nugraha,Junior Programmer,Quality Assurance,Karyawan,79,91,94,9,84
+EMP0010,Gilang Budiman,UI/UX Designer,Marketing & Sales,Karyawan,76,83,93,13,76
+EMP0011,Kartika Budiman,Graphic Designer,Customer Support,Karyawan,92,73,79,5,77
+EMP0012,Kevin Kusuma,Senior Programmer,Marketing & Sales,Karyawan,92,79,73,13,77
+EMP0013,Hadi Utomo,Content Strategist,Quality Assurance,Karyawan,87,93,77,9,84
+EMP0014,Joko Ramadhan,Finance Manager,Finance & Accounting,Atasan,87,78,88,11,91
+EMP0015,Nadya Kusuma,Staff Akuntansi,Customer Support,Karyawan,94,83,73,1,78
+EMP0016,Rian Lestari,Helpdesk Specialist,IT & Development,Karyawan,81,72,88,9,88
+EMP0017,Eka Wijaya,Junior Programmer,Customer Support,Karyawan,94,91,88,8,94
+EMP0018,Utami Purnama,Graphic Designer,Customer Support,Karyawan,81,72,75,14,88
+EMP0019,Utami Hartono,Junior Programmer,Human Resources (HRD),Karyawan,80,78,73,14,88
+EMP0020,Rizky Purnama,Financial Analyst,IT & Development,Karyawan,80,78,88,13,84
+EMP0021,Hendra Purnama,Kepala Divisi Logistik,IT & Development,Atasan,94,83,86,2,81
+EMP0022,Taufik Permana,Content Strategist,Finance & Accounting,Karyawan,91,90,80,12,71
+EMP0023,Farhan Santoso,Financial Analyst,Product & Design,Karyawan,75,82,79,11,83
+EMP0024,Bagus Permana,Automation Engineer,Operations & Logistik,Karyawan,80,73,82,12,91
+EMP0025,Rizky Susanto,Graphic Designer,Finance & Accounting,Karyawan,93,74,96,5,70
+EMP0026,Wahyu Setiawan,UI/UX Designer,Operations & Logistik,Karyawan,91,83,93,13,71
+EMP0027,Aditya Anggraeni,QA Tester,IT & Development,Karyawan,79,75,74,13,94
+EMP0028,Aditya Hidayat,Head of IT,Quality Assurance,Atasan,81,85,90,4,91
+EMP0029,Wahyu Saputra,Senior Programmer,Marketing & Sales,Karyawan,80,93,94,7,70
+EMP0030,Nadya Nugraha,QA Tester,Quality Assurance,Karyawan,90,76,80,13,72
+EMP0031,Cahya Wijaya,Customer Care Officer,Finance & Accounting,Karyawan,85,83,72,6,81
+EMP0032,Dian Firmansyah,QA Tester,Product & Design,Karyawan,90,88,74,15,84
+EMP0033,Vina Suhendra,Content Strategist,Marketing & Sales,Karyawan,84,74,92,5,78
+EMP0034,Nugroho Gunawan,SEO Specialist,Finance & Accounting,Karyawan,94,78,77,3,82
+EMP0035,Olivia Suhendra,Engineering Manager,Product & Design,Atasan,81,82,73,13,95
+EMP0036,Lestari Wijaya,Logistics Officer,Operations & Logistik,Karyawan,97,75,72,14,88
+EMP0037,Gilang Permana,Data Entry Staff,Marketing & Sales,Karyawan,81,86,72,3,71
+EMP0038,Irfan Kusuma,Customer Care Officer,Marketing & Sales,Karyawan,97,80,96,2,74
+EMP0039,Eka Suhendra,Customer Care Officer,IT & Development,Karyawan,85,76,79,6,72
+EMP0040,Joko Nugraha,Frontend Developer,Marketing & Sales,Karyawan,81,79,76,10,78
+EMP0041,Indah Firmansyah,Helpdesk Specialist,Marketing & Sales,Karyawan,92,75,87,4,81
+EMP0042,Siti Siregar,Operations Supervisor,Finance & Accounting,Atasan,82,70,85,10,94
+EMP0043,Ahmad Saputra,Senior Programmer,Human Resources (HRD),Karyawan,81,81,84,14,83
+EMP0044,Utami Wahyudi,Content Strategist,Operations & Logistik,Karyawan,94,71,95,7,90
+EMP0045,Citra Purnama,QA Tester,Finance & Accounting,Karyawan,78,78,86,5,92
+EMP0046,Joko Wijaya,Senior Programmer,Product & Design,Karyawan,84,78,95,1,74
+EMP0047,Indah Saputra,Frontend Developer,Operations & Logistik,Karyawan,79,86,86,14,86
+EMP0048,Joko Gunawan,Sales Representative,Operations & Logistik,Karyawan,83,79,85,9,71
+EMP0049,Dewi Purnama,Finance Manager,Human Resources (HRD),Atasan,75,81,77,14,71
+EMP0050,Irfan Santoso,Automation Engineer,Customer Support,Karyawan,98,78,91,5,80
+EMP0051,Citra Wijaya,Staff Akuntansi,Operations & Logistik,Karyawan,89,84,83,5,78
+EMP0052,Olivia Anggraeni,Financial Analyst,Human Resources (HRD),Karyawan,94,85,84,9,85
+EMP0053,Kevin Hartono,Customer Care Officer,Finance & Accounting,Karyawan,86,79,91,4,83
+EMP0054,Citra Firmansyah,HR Officer,Finance & Accounting,Karyawan,87,86,74,1,80
+EMP0055,Fajar Purnama,Backend Developer,Customer Support,Karyawan,81,90,89,14,82
+EMP0056,Irfan Saputra,Finance Manager,Finance & Accounting,Atasan,90,70,85,2,92
+EMP0057,Fajar Budiman,Helpdesk Specialist,Marketing & Sales,Karyawan,95,70,87,9,76
+EMP0058,Eka Ramadhan,Logistics Officer,Finance & Accounting,Karyawan,89,73,93,7,82
+EMP0059,Dewi Wahyudi,Senior Programmer,Human Resources (HRD),Karyawan,95,80,75,6,91
+EMP0060,Wahyu Gunawan,Graphic Designer,Human Resources (HRD),Karyawan,92,80,93,12,85
+EMP0061,Utami Ramadhan,Senior Programmer,IT & Development,Karyawan,96,79,95,8,82
+EMP0062,Yoga Ramadhan,HR Officer,Human Resources (HRD),Karyawan,78,84,81,7,89
+EMP0063,Indah Susanto,Engineering Manager,Quality Assurance,Atasan,94,86,76,10,76
+EMP0064,Nadya Susanto,Sales Representative,Marketing & Sales,Karyawan,95,87,82,1,83
+EMP0065,Joko Susanto,Automation Engineer,Operations & Logistik,Karyawan,78,93,74,1,75
+EMP0066,Gita Suhendra,Senior Programmer,Quality Assurance,Karyawan,86,74,79,8,89
+EMP0067,Cahya Wicaksono,UI/UX Designer,Quality Assurance,Karyawan,95,70,73,5,87
+EMP0068,Ahmad Purnama,Logistics Officer,Marketing & Sales,Karyawan,78,83,72,8,79
+EMP0069,Olivia Suhendra,Sales Representative,Finance & Accounting,Karyawan,80,88,81,12,77
+EMP0070,Hadi Kusuma,Kepala Divisi Logistik,Finance & Accounting,Atasan,83,73,79,8,88
+EMP0071,Eko Syahputra,Customer Care Officer,Finance & Accounting,Karyawan,83,83,75,14,82
+EMP0072,Taufik Susanto,Junior Programmer,Human Resources (HRD),Karyawan,96,91,92,1,79
+EMP0073,Gita Gunawan,Helpdesk Specialist,Customer Support,Karyawan,85,84,74,12,86
+EMP0074,Maulana Santoso,Recruitment Specialist,Quality Assurance,Karyawan,88,83,80,7,83
+EMP0075,Gilang Syahputra,Graphic Designer,Finance & Accounting,Karyawan,83,76,85,7,73
+EMP0076,Putra Permana,Helpdesk Specialist,Human Resources (HRD),Karyawan,92,91,75,14,87
+EMP0077,Olivia Hidayat,Finance Manager,Product & Design,Atasan,86,82,82,14,80
+EMP0078,Pratama Nugraha,QA Tester,IT & Development,Karyawan,91,84,96,15,85
+EMP0079,Julian Firmansyah,QA Tester,Quality Assurance,Karyawan,94,90,78,2,95
+EMP0080,Lestari Setiawan,UI/UX Designer,Product & Design,Karyawan,75,82,89,4,73
+EMP0081,Hadi Utomo,Frontend Developer,Product & Design,Karyawan,87,81,87,2,77
+EMP0082,Eka Wijaya,Junior Programmer,IT & Development,Karyawan,91,82,78,7,85
+EMP0083,Bagus Saputra,UI/UX Designer,Human Resources (HRD),Karyawan,81,92,72,1,91
+EMP0084,Farhan Firmansyah,Supervisor Customer Support,Marketing & Sales,Atasan,77,77,79,12,73
+EMP0085,Bagus Purnama,Financial Analyst,Marketing & Sales,Karyawan,96,80,93,9,75
+EMP0086,Ahmad Lestari,Helpdesk Specialist,Operations & Logistik,Karyawan,91,82,76,6,80
+EMP0087,Dewi Kusuma,Staff Akuntansi,Operations & Logistik,Karyawan,88,71,72,3,95
+EMP0088,Eka Lestari,Data Entry Staff,Human Resources (HRD),Karyawan,85,88,86,7,94
+EMP0089,Eko Setiawan,SEO Specialist,Product & Design,Karyawan,95,83,78,6,95
+EMP0090,Eka Ramadhan,HR Officer,Customer Support,Karyawan,84,91,74,2,86
+EMP0091,Budi Utomo,Finance Manager,Customer Support,Atasan,82,75,77,7,81
+EMP0092,Yoga Hidayat,Content Strategist,Product & Design,Karyawan,98,76,76,9,94
+EMP0093,Kartika Budiman,Backend Developer,Finance & Accounting,Karyawan,76,73,91,5,74
+EMP0094,Ahmad Firmansyah,Content Strategist,Marketing & Sales,Karyawan,89,84,75,11,83
+EMP0095,Vina Ramadhan,SEO Specialist,Human Resources (HRD),Karyawan,95,74,96,7,90
+EMP0096,Siti Suhendra,Graphic Designer,Operations & Logistik,Karyawan,82,70,84,1,93
+EMP0097,Dian Lestari,UI/UX Designer,Operations & Logistik,Karyawan,91,83,94,9,85
+EMP0098,Budi Kusuma,Engineering Manager,Finance & Accounting,Atasan,81,85,82,5,80
+EMP0099,Putra Saputra,Staff Akuntansi,Quality Assurance,Karyawan,90,88,92,7,71
+EMP0100,Gita Gunawan,Helpdesk Specialist,IT & Development,Karyawan,92,79,83,15,75
+EMP0101,Fajar Saputra,Frontend Developer,Product & Design,Karyawan,81,75,93,7,84
+EMP0102,Nugroho Saputra,Customer Care Officer,Marketing & Sales,Karyawan,96,78,96,9,85
+EMP0103,Ahmad Purnama,Junior Programmer,Product & Design,Karyawan,78,89,89,14,91
+EMP0104,Julian Anggraeni,Helpdesk Specialist,Product & Design,Karyawan,76,84,92,9,93
+EMP0105,Kartika Hidayat,Lead Product Designer,Customer Support,Atasan,82,80,80,3,90
+EMP0106,Dewi Susanto,Helpdesk Specialist,Marketing & Sales,Karyawan,79,72,79,10,70
+EMP0107,Siti Suhendra,Recruitment Specialist,Finance & Accounting,Karyawan,97,88,93,8,80
+EMP0108,Dewi Anggraeni,SEO Specialist,Finance & Accounting,Karyawan,91,92,91,11,90
+EMP0109,Dian Permana,QA Tester,Human Resources (HRD),Karyawan,91,86,83,1,81
+EMP0110,Fajar Setiawan,Financial Analyst,IT & Development,Karyawan,93,81,79,2,79
+EMP0111,Rian Gunawan,Financial Analyst,Human Resources (HRD),Karyawan,94,93,93,14,87
+EMP0112,Farhan Santoso,Operations Supervisor,Product & Design,Atasan,90,75,86,10,77
+EMP0113,Eka Setiawan,Staff Akuntansi,Human Resources (HRD),Karyawan,82,85,86,1,89
+EMP0114,Lestari Setiawan,UI/UX Designer,Quality Assurance,Karyawan,87,77,92,15,74
+EMP0115,Budi Siregar,Customer Care Officer,Human Resources (HRD),Karyawan,97,74,86,12,84
+EMP0116,Rizky Wicaksono,Financial Analyst,Finance & Accounting,Karyawan,97,85,88,12,76
+EMP0117,Putra Pratama,Frontend Developer,Finance & Accounting,Karyawan,97,78,93,14,93
+EMP0118,Dewi Budiman,Recruitment Specialist,Human Resources (HRD),Karyawan,94,74,80,11,88
+EMP0119,Maya Setiawan,Supervisor Customer Support,Customer Support,Atasan,76,79,74,13,90
+EMP0120,Zulfa Hidayat,SEO Specialist,Customer Support,Karyawan,77,91,92,4,72
+EMP0121,Maya Utomo,Senior Programmer,Product & Design,Karyawan,97,94,78,13,80
+EMP0122,Zulfa Suhendra,Customer Care Officer,Finance & Accounting,Karyawan,91,80,87,10,90
+EMP0123,Vina Wahyudi,HR Officer,Human Resources (HRD),Karyawan,98,94,86,3,84
+EMP0124,Kartika Santoso,Staff Akuntansi,Finance & Accounting,Karyawan,88,95,89,6,70
+EMP0125,Gilang Hartono,Junior Programmer,Human Resources (HRD),Karyawan,97,94,74,12,85
+EMP0126,Indah Hidayat,Lead Product Designer,Marketing & Sales,Atasan,86,80,73,6,94
+EMP0127,Indah Susanto,Customer Care Officer,Finance & Accounting,Karyawan,75,78,85,15,71
+EMP0128,Julian Santoso,Sales Representative,Human Resources (HRD),Karyawan,95,93,80,4,77
+EMP0129,Rizky Syahputra,Frontend Developer,IT & Development,Karyawan,86,74,81,15,82
+EMP0130,Kevin Kusuma,UI/UX Designer,Marketing & Sales,Karyawan,93,71,73,12,70
+EMP0131,Dian Nugraha,Data Entry Staff,Operations & Logistik,Karyawan,77,84,84,8,95
+EMP0132,Budi Lestari,QA Tester,Product & Design,Karyawan,98,93,77,10,79
+EMP0133,Kevin Firmansyah,Lead Product Designer,Customer Support,Atasan,81,75,90,3,89
+EMP0134,Wahyu Suhendra,Graphic Designer,Finance & Accounting,Karyawan,83,86,73,6,72
+EMP0135,Kartika Setiawan,Backend Developer,Quality Assurance,Karyawan,81,73,96,3,95
+EMP0136,Citra Ramadhan,Frontend Developer,Finance & Accounting,Karyawan,93,94,78,1,88
+EMP0137,Irfan Santoso,QA Tester,Operations & Logistik,Karyawan,75,94,76,2,82
+EMP0138,Cahya Hartono,QA Tester,Operations & Logistik,Karyawan,76,91,96,11,72
+EMP0139,Julian Permana,Automation Engineer,Operations & Logistik,Karyawan,78,74,84,3,94
+EMP0140,Aditya Utomo,Supervisor Customer Support,IT & Development,Atasan,89,76,83,7,87
+EMP0141,Hendra Kusuma,Logistics Officer,IT & Development,Karyawan,83,83,91,15,80
+EMP0142,Eko Wahyudi,Automation Engineer,IT & Development,Karyawan,88,94,72,12,84
+EMP0143,Taufik Suhendra,UI/UX Designer,Finance & Accounting,Karyawan,82,75,86,10,89
+EMP0144,Dian Budiman,Financial Analyst,Customer Support,Karyawan,80,93,82,14,84
+EMP0145,Dian Wahyudi,Customer Care Officer,Customer Support,Karyawan,82,75,94,5,82
+EMP0146,Bagus Wijaya,Logistics Officer,Quality Assurance,Karyawan,96,72,94,3,87
+EMP0147,Indah Permana,Operations Supervisor,Human Resources (HRD),Atasan,91,86,77,5,83
+EMP0148,Gilang Utomo,SEO Specialist,Quality Assurance,Karyawan,83,88,74,6,72
+EMP0149,Lestari Siregar,Logistics Officer,Human Resources (HRD),Karyawan,90,93,77,6,74
+EMP0150,Irfan Ramadhan,Sales Representative,Finance & Accounting,Karyawan,79,93,87,14,93
+EMP0151,Taufik Siregar,UI/UX Designer,Marketing & Sales,Karyawan,76,78,94,5,72
+EMP0152,Gita Santoso,Sales Representative,Marketing & Sales,Karyawan,98,88,84,10,86
+EMP0153,Dian Siregar,Logistics Officer,Product & Design,Karyawan,86,94,76,4,78
+EMP0154,Eko Setiawan,Engineering Manager,Finance & Accounting,Atasan,85,81,94,10,70
+EMP0155,Cahya Nugraha,Backend Developer,IT & Development,Karyawan,84,89,88,4,83
+EMP0156,Farhan Purnama,Graphic Designer,Finance & Accounting,Karyawan,95,71,92,6,87
+EMP0157,Yoga Suhendra,Recruitment Specialist,Human Resources (HRD),Karyawan,79,76,81,10,70
+EMP0158,Eko Wahyudi,HR Officer,Human Resources (HRD),Karyawan,84,70,83,3,92
+EMP0159,Eka Firmansyah,Sales Representative,Finance & Accounting,Karyawan,85,74,89,5,75
+EMP0160,Gilang Siregar,Backend Developer,Human Resources (HRD),Karyawan,76,70,73,7,79
+EMP0161,Eko Wijaya,Head of IT,Marketing & Sales,Atasan,89,88,77,2,83
+EMP0162,Nadya Utomo,Logistics Officer,Operations & Logistik,Karyawan,98,82,96,12,84
+EMP0163,Pratama Permana,Graphic Designer,Customer Support,Karyawan,75,95,95,14,83
+EMP0164,Rian Susanto,Sales Representative,Quality Assurance,Karyawan,90,72,83,2,75
+EMP0165,Nugroho Suhendra,Graphic Designer,Product & Design,Karyawan,86,90,91,7,87
+EMP0166,Gilang Suhendra,Automation Engineer,Human Resources (HRD),Karyawan,86,77,79,7,71
+EMP0167,Olivia Ramadhan,Graphic Designer,Quality Assurance,Karyawan,94,83,93,11,78
+EMP0168,Zulfa Nugraha,Supervisor Customer Support,Marketing & Sales,Atasan,79,70,76,11,79
+EMP0169,Kevin Ramadhan,SEO Specialist,Finance & Accounting,Karyawan,83,85,96,11,92
+EMP0170,Joko Purnama,Backend Developer,Finance & Accounting,Karyawan,97,82,75,14,85
+EMP0171,Rian Santoso,Helpdesk Specialist,Quality Assurance,Karyawan,93,81,73,4,87
+EMP0172,Lestari Gunawan,Logistics Officer,Finance & Accounting,Karyawan,98,93,78,15,73
+EMP0173,Taufik Suhendra,Graphic Designer,Product & Design,Karyawan,76,87,85,7,85
+EMP0174,Putra Hartono,QA Tester,Product & Design,Karyawan,91,83,95,7,94
+EMP0175,Lestari Susanto,Marketing Lead,Operations & Logistik,Atasan,81,91,81,8,82
+EMP0176,Maulana Anggraeni,Financial Analyst,Marketing & Sales,Karyawan,80,81,82,5,84
+EMP0177,Siti Wahyudi,Backend Developer,Product & Design,Karyawan,87,82,76,8,84
+EMP0178,Kevin Firmansyah,QA Tester,Quality Assurance,Karyawan,98,95,90,10,82
+EMP0179,Cahya Budiman,HR Officer,Quality Assurance,Karyawan,82,81,80,5,73
+EMP0180,Hadi Hidayat,Content Strategist,Human Resources (HRD),Karyawan,78,75,89,14,77
+EMP0181,Bagus Wicaksono,Frontend Developer,Finance & Accounting,Karyawan,98,88,80,14,94
+EMP0182,Joko Suhendra,Operations Supervisor,Marketing & Sales,Atasan,91,94,74,10,81
+EMP0183,Lestari Kusuma,Data Entry Staff,IT & Development,Karyawan,84,72,72,6,77
+EMP0184,Maulana Wahyudi,Customer Care Officer,Product & Design,Karyawan,84,89,76,12,74
+EMP0185,Zulfa Saputra,Backend Developer,Operations & Logistik,Karyawan,88,80,73,12,77
+EMP0186,Cahya Hartono,Automation Engineer,IT & Development,Karyawan,85,78,88,13,88
+EMP0187,Utami Gunawan,Customer Care Officer,Marketing & Sales,Karyawan,84,89,83,10,90
+EMP0188,Indah Gunawan,Graphic Designer,Customer Support,Karyawan,94,83,80,14,78
+EMP0189,Siti Ramadhan,Supervisor Customer Support,Operations & Logistik,Atasan,96,81,94,4,80
+EMP0190,Cahya Siregar,Sales Representative,Customer Support,Karyawan,89,92,96,14,81
+EMP0191,Rizky Setiawan,Customer Care Officer,Human Resources (HRD),Karyawan,75,89,72,8,74
+EMP0192,Siti Nugraha,Staff Akuntansi,Operations & Logistik,Karyawan,96,78,90,1,84
+EMP0193,Maya Setiawan,Automation Engineer,Customer Support,Karyawan,95,88,96,2,76
+EMP0194,Aditya Hartono,HR Officer,Customer Support,Karyawan,93,78,90,11,77
+EMP0195,Irfan Gunawan,Logistics Officer,Operations & Logistik,Karyawan,79,83,96,3,75
+EMP0196,Lestari Purnama,Engineering Manager,Human Resources (HRD),Atasan,75,87,77,13,81
+EMP0197,Nadya Budiman,Staff Akuntansi,Marketing & Sales,Karyawan,78,74,89,14,91
+EMP0198,Rizky Wijaya,Recruitment Specialist,Human Resources (HRD),Karyawan,94,76,85,7,75
+EMP0199,Siti Gunawan,Customer Care Officer,Human Resources (HRD),Karyawan,78,79,81,15,73
+EMP0200,Kartika Suhendra,HR Officer,Human Resources (HRD),Karyawan,87,88,91,10,75
+EMP0201,Irfan Susanto,Automation Engineer,Product & Design,Karyawan,89,90,86,5,79
+EMP0202,Ahmad Kusuma,Backend Developer,Product & Design,Karyawan,98,91,80,10,76
+EMP0203,Lestari Pratama,Marketing Lead,Product & Design,Atasan,87,80,80,2,79
+EMP0204,Fajar Siregar,Recruitment Specialist,Operations & Logistik,Karyawan,75,81,78,1,76
+EMP0205,Eka Santoso,HR Officer,Finance & Accounting,Karyawan,91,87,76,6,75
+EMP0206,Eko Firmansyah,Helpdesk Specialist,Product & Design,Karyawan,80,87,72,5,90
+EMP0207,Fajar Utomo,Junior Programmer,Product & Design,Karyawan,93,81,89,7,85
+EMP0208,Gilang Santoso,Frontend Developer,Human Resources (HRD),Karyawan,96,81,89,10,70
+EMP0209,Pratama Lestari,Staff Akuntansi,IT & Development,Karyawan,82,79,82,5,70
+EMP0210,Wahyu Pratama,Supervisor Customer Support,IT & Development,Atasan,83,72,95,6,76
+EMP0211,Zulfa Saputra,Junior Programmer,Finance & Accounting,Karyawan,98,74,95,6,80
+EMP0212,Maya Ramadhan,Recruitment Specialist,IT & Development,Karyawan,98,93,85,8,80
+EMP0213,Ahmad Firmansyah,QA Tester,IT & Development,Karyawan,80,86,95,1,90
+EMP0214,Maulana Santoso,Logistics Officer,IT & Development,Karyawan,82,73,77,6,91
+EMP0215,Vina Lestari,Customer Care Officer,Human Resources (HRD),Karyawan,80,87,76,10,74
+EMP0216,Rizky Siregar,Logistics Officer,Marketing & Sales,Karyawan,77,77,85,8,87
+EMP0217,Indah Susanto,Marketing Lead,Product & Design,Atasan,86,71,84,6,74
+EMP0218,Lukman Saputra,Content Strategist,Operations & Logistik,Karyawan,88,78,72,13,80
+EMP0219,Bagus Hidayat,Graphic Designer,IT & Development,Karyawan,87,87,95,4,81
+EMP0220,Maya Siregar,Staff Akuntansi,Product & Design,Karyawan,95,87,87,2,86
+EMP0221,Joko Budiman,Senior Programmer,Finance & Accounting,Karyawan,78,89,88,6,87
+EMP0222,Fajar Wicaksono,UI/UX Designer,Operations & Logistik,Karyawan,95,94,72,10,81
+EMP0223,Ahmad Ramadhan,HR Officer,IT & Development,Karyawan,80,94,82,5,89
+EMP0224,Pratama Hidayat,Finance Manager,Quality Assurance,Atasan,83,71,95,7,78
+EMP0225,Yoga Utomo,QA Tester,Human Resources (HRD),Karyawan,88,86,87,4,90
+EMP0226,Citra Hidayat,Graphic Designer,IT & Development,Karyawan,79,74,87,11,75
+EMP0227,Gilang Purnama,Junior Programmer,Product & Design,Karyawan,81,76,72,7,89
+EMP0228,Rian Wicaksono,Customer Care Officer,Marketing & Sales,Karyawan,91,89,80,11,80
+EMP0229,Hendra Wijaya,Customer Care Officer,Product & Design,Karyawan,86,89,92,3,89
+EMP0230,Nadya Anggraeni,Staff Akuntansi,IT & Development,Karyawan,88,73,82,8,87
+EMP0231,Citra Purnama,Lead Product Designer,Human Resources (HRD),Atasan,84,86,83,5,74
+EMP0232,Yoga Pratama,Frontend Developer,Customer Support,Karyawan,81,84,76,6,76
+EMP0233,Julian Siregar,QA Tester,Customer Support,Karyawan,78,89,75,14,71
+EMP0234,Siti Utomo,Automation Engineer,Human Resources (HRD),Karyawan,88,79,80,14,70
+EMP0235,Bagus Susanto,Customer Care Officer,Customer Support,Karyawan,96,72,88,2,91
+EMP0236,Gilang Lestari,SEO Specialist,Customer Support,Karyawan,93,74,77,5,83
+EMP0237,Utami Pratama,HR Officer,Finance & Accounting,Karyawan,89,82,96,15,85
+EMP0238,Budi Wicaksono,HR Manager,Human Resources (HRD),Atasan,97,71,77,4,77
+EMP0239,Wahyu Nugraha,HR Officer,Product & Design,Karyawan,78,84,83,15,88
+EMP0240,Pratama Syahputra,Frontend Developer,Marketing & Sales,Karyawan,94,79,95,6,85
+EMP0241,Hadi Firmansyah,Graphic Designer,Customer Support,Karyawan,83,87,95,6,77
+EMP0242,Gilang Siregar,QA Tester,Operations & Logistik,Karyawan,81,78,89,3,93
+EMP0243,Lukman Utomo,Automation Engineer,Product & Design,Karyawan,86,79,91,1,81
+EMP0244,Yoga Purnama,Senior Programmer,Customer Support,Karyawan,95,89,95,1,84
+EMP0245,Zulfa Pratama,Operations Supervisor,Marketing & Sales,Atasan,93,73,94,6,95
+EMP0246,Joko Nugraha,UI/UX Designer,Operations & Logistik,Karyawan,96,75,83,2,75
+EMP0247,Yoga Lestari,Logistics Officer,Product & Design,Karyawan,89,90,75,5,75
+EMP0248,Cahya Permana,UI/UX Designer,Marketing & Sales,Karyawan,82,72,90,3,71
+EMP0249,Fajar Susanto,Sales Representative,Finance & Accounting,Karyawan,80,85,76,4,79
+EMP0250,Joko Purnama,Graphic Designer,Finance & Accounting,Karyawan,95,92,88,7,79
+EMP0251,Utami Pratama,Frontend Developer,Quality Assurance,Karyawan,78,95,72,1,79
+EMP0252,Zulfa Wahyudi,Operations Supervisor,Customer Support,Atasan,88,95,83,5,89
+EMP0253,Taufik Susanto,UI/UX Designer,Product & Design,Karyawan,91,79,85,11,76
+EMP0254,Vina Syahputra,Graphic Designer,Marketing & Sales,Karyawan,79,90,89,14,70
+EMP0255,Maulana Saputra,SEO Specialist,Customer Support,Karyawan,96,88,91,13,89
+EMP0256,Cahya Anggraeni,Data Entry Staff,Human Resources (HRD),Karyawan,81,94,79,7,80
+EMP0257,Bagus Wicaksono,Financial Analyst,IT & Development,Karyawan,82,77,80,2,75
+EMP0258,Irfan Nugraha,Sales Representative,Quality Assurance,Karyawan,95,78,91,9,93
+EMP0259,Pratama Lestari,HR Manager,Finance & Accounting,Atasan,87,85,88,4,90
+EMP0260,Eka Utomo,Automation Engineer,Customer Support,Karyawan,87,80,72,3,88
+EMP0261,Taufik Santoso,HR Officer,Finance & Accounting,Karyawan,77,93,86,5,89
+EMP0262,Utami Utomo,Financial Analyst,Product & Design,Karyawan,84,93,82,13,86
+EMP0263,Olivia Anggraeni,Sales Representative,Marketing & Sales,Karyawan,85,95,89,13,79
+EMP0264,Bagus Wahyudi,HR Officer,Product & Design,Karyawan,83,83,79,1,93
+EMP0265,Cahya Siregar,Staff Akuntansi,Marketing & Sales,Karyawan,76,77,90,5,73
+EMP0266,Eka Saputra,HR Manager,Customer Support,Atasan,76,88,90,5,73
+EMP0267,Lestari Nugraha,Logistics Officer,Quality Assurance,Karyawan,77,74,88,6,92
+EMP0268,Farhan Wijaya,Backend Developer,Human Resources (HRD),Karyawan,83,81,77,12,70
+EMP0269,Yoga Siregar,Staff Akuntansi,Human Resources (HRD),Karyawan,81,86,77,14,71
+EMP0270,Wahyu Anggraeni,Staff Akuntansi,Finance & Accounting,Karyawan,75,71,89,11,95
+EMP0271,Irfan Gunawan,UI/UX Designer,Quality Assurance,Karyawan,96,95,83,3,79
+EMP0272,Cahya Wicaksono,Senior Programmer,Product & Design,Karyawan,80,86,86,6,90
+EMP0273,Rian Purnama,Engineering Manager,Finance & Accounting,Atasan,95,73,94,4,79
+EMP0274,Fajar Nugraha,Financial Analyst,Quality Assurance,Karyawan,84,91,87,10,75
+EMP0275,Zulfa Hidayat,Backend Developer,Product & Design,Karyawan,86,86,84,14,72
+EMP0276,Fajar Saputra,QA Tester,Quality Assurance,Karyawan,89,78,85,13,72
+EMP0277,Eko Susanto,Helpdesk Specialist,Product & Design,Karyawan,96,82,95,13,81
+EMP0278,Lestari Wicaksono,UI/UX Designer,Customer Support,Karyawan,85,74,86,15,85
+EMP0279,Gita Wijaya,Recruitment Specialist,Customer Support,Karyawan,77,74,96,13,90
+EMP0280,Siti Pratama,Marketing Lead,Customer Support,Atasan,92,71,85,8,93
+EMP0281,Irfan Wicaksono,QA Tester,Finance & Accounting,Karyawan,78,74,93,11,85
+EMP0282,Kevin Wicaksono,Senior Programmer,IT & Development,Karyawan,87,85,83,10,82
+EMP0283,Siti Hartono,SEO Specialist,Operations & Logistik,Karyawan,76,85,87,10,88
+EMP0284,Kartika Kusuma,Recruitment Specialist,Product & Design,Karyawan,77,85,79,1,76
+EMP0285,Lukman Ramadhan,Graphic Designer,Finance & Accounting,Karyawan,97,72,87,7,84
+EMP0286,Irfan Pratama,Frontend Developer,IT & Development,Karyawan,81,74,91,10,73
+EMP0287,Cahya Saputra,Kepala Divisi Logistik,Marketing & Sales,Atasan,80,74,96,10,87
+EMP0288,Wahyu Gunawan,Staff Akuntansi,Quality Assurance,Karyawan,82,87,89,5,80
+EMP0289,Julian Permana,HR Officer,Customer Support,Karyawan,88,92,80,11,92
+EMP0290,Gita Hartono,HR Officer,Marketing & Sales,Karyawan,95,77,79,3,75
+EMP0291,Cahya Anggraeni,Recruitment Specialist,Product & Design,Karyawan,89,82,84,2,85
+EMP0292,Nadya Siregar,Content Strategist,Customer Support,Karyawan,94,94,85,8,84
+EMP0293,Citra Hartono,SEO Specialist,Marketing & Sales,Karyawan,89,83,89,10,83
+EMP0294,Vina Wahyudi,Kepala Divisi Logistik,Customer Support,Atasan,77,91,79,10,73
+EMP0295,Lukman Gunawan,Logistics Officer,Finance & Accounting,Karyawan,77,84,76,13,72
+EMP0296,Kevin Susanto,Helpdesk Specialist,Marketing & Sales,Karyawan,80,75,85,11,94
+EMP0297,Putra Lestari,Automation Engineer,Human Resources (HRD),Karyawan,90,89,77,10,75
+EMP0298,Cahya Santoso,Customer Care Officer,Operations & Logistik,Karyawan,90,71,75,10,73
+EMP0299,Farhan Pratama,Recruitment Specialist,Marketing & Sales,Karyawan,84,88,87,2,74
+EMP0300,Eko Gunawan,Helpdesk Specialist,Operations & Logistik,Karyawan,77,86,83,7,95

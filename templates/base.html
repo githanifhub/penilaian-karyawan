@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Perfomax - Evaluasi Kinerja Karyawan{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for Tech-Savvy Performance Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS (Steam-Inspired Dark Theme) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+            <div class="brand-info">
+                <h1>Perfomax<span class="brand-dot">.</span></h1>
+                <p>Performance Intelligence</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <span class="menu-category">Menu Utama</span>
+            <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dashboard</span>
+            </a>
+
+            {% if session.get('role') in ['admin', 'atasan'] %}
+            <span class="menu-category">Data Master</span>
+            <a href="{{ url_for('karyawan') }}" class="nav-link {% if request.endpoint == 'karyawan' %}active{% endif %}">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <span>Data Karyawan</span>
+            </a>
+            {% if session.get('role') == 'admin' %}
+            <a href="{{ url_for('kriteria') }}" class="nav-link {% if request.endpoint == 'kriteria' %}active{% endif %}">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Kriteria & Bobot</span>
+            </a>
+            {% endif %}
+            {% endif %}
+
+            <span class="menu-category">Penilaian & Peringkat</span>
+            {% if session.get('role') in ['admin', 'atasan'] %}
+            <a href="{{ url_for('penilaian') }}" class="nav-link {% if request.endpoint == 'penilaian' %}active{% endif %}">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span>Matriks Penilaian</span>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('hasil') }}" class="nav-link {% if request.endpoint == 'hasil' %}active{% endif %}">
+                <i class="fa-solid fa-trophy"></i>
+                <span>Hasil & Ranking</span>
+            </a>
+
+            <span class="menu-category">Pengaturan Akun</span>
+            <a href="{{ url_for('ganti_password') }}" class="nav-link {% if request.endpoint == 'ganti_password' %}active{% endif %}">
+                <i class="fa-solid fa-key"></i>
+                <span>Ganti Password</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                    <div style="width: 34px; height: 34px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--primary) 0%, #005bb5 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; border: 1px solid rgba(102, 192, 244, 0.4);">
+                        {{ (session.get('nama', 'U'))[0]|upper }}
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div style="font-weight: 700; font-size: 0.82rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ session.get('nama', 'User') }}
+                        </div>
+                        <div>
+                            {% if session.get('role') == 'admin' %}
+                            <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); font-size: 0.65rem; padding: 1px 6px;">ADMIN</span>
+                            {% elif session.get('role') == 'atasan' %}
+                            <span class="badge" style="background: var(--purple-bg); color: var(--purple-atasan); border-color: var(--purple-border); font-size: 0.65rem; padding: 1px 6px;">ATASAN</span>
+                            {% else %}
+                            <span class="badge" style="background: rgba(26, 159, 255, 0.15); color: var(--cyan-accent); border-color: rgba(102, 192, 244, 0.3); font-size: 0.65rem; padding: 1px 6px;">KARYAWAN</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" title="Keluar / Logout" style="color: #ff6b6b; font-size: 1.1rem; padding: 6px; border-radius: 6px; display: inline-flex; align-items: center;" onclick="return confirm('Apakah Anda yakin ingin logout?');">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="app-main">
+        <header class="app-topbar">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="page-title-box">
+                    <h2>{% block page_heading %}Dashboard{% endblock %}</h2>
+                    <p>{% block page_subheading %}Sistem Evaluasi & Penilaian Kinerja Karyawan{% endblock %}</p>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                {% block topbar_actions %}{% endblock %}
+                <div class="user-pill no-print">
+                    <i class="fa-solid fa-circle-user" style="color: var(--cyan-accent); font-size: 1.1rem;"></i>
+                    <span style="font-weight: 600; color: #ffffff;">{{ session.get('username', 'Guest') }}</span>
+                    <a href="{{ url_for('logout') }}" style="color: #ff6b6b; margin-left: 4px; display: inline-flex;" title="Logout" onclick="return confirm('Logout sekarang?');">
+                        <i class="fa-solid fa-power-off"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body">
+            <!-- Flash Message Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                <span><i class="fa-solid fa-circle-info" style="margin-right: 8px;"></i> {{ message }}</span>
+                                <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Script Utilities -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('appSidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target && event.target.classList && event.target.classList.contains && event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

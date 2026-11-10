@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+
+{% block title %}Hasil & Perangkingan - Perfomax{% endblock %}
+{% block page_heading %}Hasil & Ranking Kinerja{% endblock %}
+{% block page_subheading %}Daftar peringkat kinerja karyawan terbaik beserta rincian akumulasi nilai evaluasi{% endblock %}
+
+{% block topbar_actions %}
+<button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+  <i class="fa-solid fa-print"></i> Cetak Laporan / PDF
+</button>
+<a href="{{ url_for('penilaian') }}" class="btn btn-primary btn-sm no-print">
+  <i class="fa-solid fa-pen-to-square"></i> Ubah Nilai Penilaian
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Print Header (Hanya muncul saat dicetak/PDF) -->
+<div class="print-only"
+  style="margin-bottom: 24px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px;">
+  <h2 style="font-size: 1.5rem; font-weight: 800; text-transform: uppercase;">Perfomax - Laporan Evaluasi Kinerja Karyawan Terbaik</h2>
+  <p style="font-size: 0.9rem; margin-top: 4px;">Laporan Resmi Evaluasi Kinerja Karyawan &bull; Periode Berjalan</p>
+</div>
+
+{% if saw.karyawan and saw.kriteria %}
+
+<!-- 1. TABEL HASIL AKHIR & PERANGKINGAN (DITAMPILKAN DI PALING ATAS DENGAN HIGHLIGHT) -->
+<div class="card" style="border: 1px solid rgba(26, 159, 255, 0.4); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">
+  <div class="card-header" style="background: linear-gradient(135deg, rgba(26, 159, 255, 0.12) 0%, rgba(23, 36, 51, 0.9) 100%);">
+    <div>
+      <h3 style="color: #ffffff; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> Hasil Akhir & Peringkat Karyawan Terbaik
+      </h3>
+      <p>Karyawan diurutkan berdasarkan perolehan Skor Kinerja tertinggi</p>
+    </div>
+    <div>
+      <span class="badge badge-aktif" style="padding: 6px 14px; font-size: 0.82rem;">
+        <i class="fa-solid fa-circle-check"></i> Selesai Dihitung
+      </span>
+    </div>
+  </div>
+
+  <!-- Search & Filter Toolbar for Ranking Results -->
+  <div class="no-print" style="background: #111a26; padding: 14px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div style="position: relative; flex: 1; min-width: 260px; max-width: 440px;">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.88rem;"></i>
+      <input 
+        type="text" 
+        id="searchHasilRankingInput" 
+        class="form-control" 
+        placeholder="Cari NIP, nama karyawan, jabatan, divisi, atau peringkat..." 
+        style="padding-left: 38px; height: 38px; font-size: 0.85rem;"
+        onkeyup="filterHasilRankingTable()"
+      >
+    </div>
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="filterHasilKategori('all')" id="btnRankAll" style="border-color: var(--cyan-accent); color: var(--cyan-accent);">
+        Semua ({{ saw.hasil_akhir|length }})
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="filterHasilKategori('top3')" id="btnRankTop3">
+        <i class="fa-solid fa-trophy" style="color: #fbbf24;"></i> Top 3
+      </button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="filterHasilKategori('top10')" id="btnRankTop10">
+        <i class="fa-solid fa-star" style="color: var(--cyan-accent);"></i> Top 10
+      </button>
+      <span id="counterHasilRanking" style="font-size: 0.78rem; color: var(--text-muted); margin-left: 6px;"></span>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th style="width: 110px; text-align: center;">Peringkat</th>
+            <th style="width: 130px;">NIP / NIK</th>
+            <th>Nama Karyawan</th>
+            <th>Jabatan & Divisi</th>
+            <th style="text-align: center; width: 170px;">Skor Akhir Kinerja</th>
+            <th style="text-align: center; width: 260px;">Keputusan Rekomendasi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in saw.hasil_akhir %}
+          <tr class="rank-row-{{ item.ranking }} hasil-rank-row" data-rank="{{ item.ranking }}">
+            <td style="text-align: center;">
+              {% if item.ranking == 1 %}
+              <span class="badge badge-rank-1"><i class="fa-solid fa-crown"></i> Juara 1</span>
+              {% elif item.ranking == 2 %}
+              <span class="badge badge-rank-2"><i class="fa-solid fa-medal"></i> Juara 2</span>
+              {% elif item.ranking == 3 %}
+              <span class="badge badge-rank-3"><i class="fa-solid fa-award"></i> Juara 3</span>
+              {% else %}
+              <span class="badge" style="background: #101924; color: #8ba2b9; border: 1px solid #22354a; font-family: 'JetBrains Mono', monospace;">#{{ item.ranking }}</span>
+              {% endif %}
+            </td>
+            <td><strong style="color: var(--primary-light); font-family: 'JetBrains Mono', monospace;">{{ item.karyawan.nik }}</strong></td>
+            <td>
+              {% if item.ranking == 1 %}
+              <strong style="font-size: 1rem; color: #fbbf24;">{{ item.karyawan.nama }}</strong>
+              {% else %}
+              <strong style="font-size: 0.95rem; color: #ffffff;">{{ item.karyawan.nama }}</strong>
+              {% endif %}
+            </td>
+            <td>
+              <div style="color: #dcdedf;">{{ item.karyawan.jabatan }}</div>
+              <small style="color: var(--text-muted);">{{ item.karyawan.divisi }}</small>
+            </td>
+            <td style="text-align: center;">
+              <strong style="font-size: 1.15rem; color: #66c0f4; font-family: 'JetBrains Mono', monospace;">{{ item.skor }}</strong>
+            </td>
+            <td style="text-align: center;">
+              {% if item.ranking == 1 %}
+              <span class="badge badge-aktif" style="font-weight: 700; padding: 6px 12px;">
+                <i class="fa-solid fa-star"></i> Karyawan Terbaik (Sangat Direkomendasikan)
+              </span>
+              {% elif item.ranking in [2, 3] %}
+              <span class="badge" style="background: rgba(26, 159, 255, 0.15); color: #66c0f4; border: 1px solid rgba(26, 159, 255, 0.35); font-weight: 600; padding: 6px 12px;">
+                <i class="fa-solid fa-thumbs-up"></i> Direkomendasikan (Top 3)
+              </span>
+              {% else %}
+              <span class="badge" style="background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid #334155; padding: 5px 10px;">
+                Cukup Baik
+              </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          <tr id="noResultsHasilRow" style="display: none;">
+            <td colspan="6" style="text-align: center; padding: 36px 20px; color: var(--text-muted);">
+              <i class="fa-solid fa-trophy" style="font-size: 2.2rem; color: #2b425b; margin-bottom: 10px; display: block;"></i>
+              <span style="font-size: 0.95rem; font-weight: 600; color: #ffffff;">Tidak ada peringkat karyawan yang cocok dengan pencarian</span>
+              <p style="font-size: 0.8rem; margin: 4px 0 0; color: #8ba2b9;">Silakan gunakan kata kunci pencarian atau kategori peringkat lainnya.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- RINCIAN DATA & AKUMULASI NILAI -->
+<div style="margin: 36px 0 18px;">
+  <h3
+    style="font-size: 1.25rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 10px;">
+    <i class="fa-solid fa-diagram-project" style="color: var(--primary);"></i> Rincian Data & Akumulasi Penilaian Kinerja
+  </h3>
+  <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+    Rincian data nilai mentah, standarisasi skala nilai, dan kontribusi bobot setiap kriteria.
+  </p>
+</div>
+
+<!-- LANGKAH 1: DATA NILAI MENTAH -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <div>
+      <h3 style="color: #ffffff;"><span class="step-badge">1</span> Data Nilai Mentah Karyawan</h3>
+      <p>Data nilai mentah hasil penilaian dari setiap kriteria terhadap masing-masing alternatif karyawan</p>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th style="width: 50px;">No</th>
+            <th>Alternatif / Karyawan</th>
+            {% for krit in saw.kriteria %}
+            <th style="text-align: center;">
+              {{ krit.kode }} <small style="color: var(--text-muted); display: block;">({{ krit.nama }})</small>
+            </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for emp in saw.karyawan %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>
+              <strong style="color: #ffffff;">{{ emp.nama }}</strong> 
+              <small style="color: var(--primary-light); font-family: 'JetBrains Mono', monospace;">({{ emp.nik }})</small>
+            </td>
+            {% for krit in saw.kriteria %}
+            <td style="text-align: center; font-weight: 600; color: #dcdedf;">
+              {{ saw.matriks_x[emp.id][krit.id] }}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot style="background: #101924; font-weight: 700; border-top: 2px solid #22354a;">
+          <tr>
+            <td colspan="2" style="text-align: right; color: #8ba2b9;">Nilai Max Tiap Kriteria:</td>
+            {% for krit in saw.kriteria %}
+            <td style="text-align: center; color: #3dd68c; font-weight: 800;">{{ saw.min_max[krit.id]['max'] }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align: right; color: #8ba2b9;">Nilai Min Tiap Kriteria:</td>
+            {% for krit in saw.kriteria %}
+            <td style="text-align: center; color: #f87171; font-weight: 800;">{{ saw.min_max[krit.id]['min'] }}</td>
+            {% endfor %}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- LANGKAH 2: STANDARISASI NILAI -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-header">
+    <div>
+      <h3 style="color: #ffffff;"><span class="step-badge">2</span> Standarisasi Nilai Kinerja</h3>
+      <p>
+        Penyesuaian skala nilai untuk kriteria <strong>Benefit</strong> (semakin tinggi semakin baik) dan <strong>Cost</strong> (semakin kecil semakin baik)
+      </p>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th style="width: 50px;">No</th>
+            <th>Alternatif / Karyawan</th>
+            {% for krit in saw.kriteria %}
+            <th style="text-align: center;">
+              <span style="font-weight: 700;">{{ krit.kode }}</span>
+              <div style="margin-top: 3px;">
+                {% if krit.tipe == 'benefit' %}
+                <span class="badge badge-benefit" style="font-size: 0.65rem; padding: 2px 6px;">Benefit</span>
+                {% else %}
+                <span class="badge badge-cost" style="font-size: 0.65rem; padding: 2px 6px;">Cost</span>
+                {% endif %}
+              </div>
+            </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for emp in saw.karyawan %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong style="color: #ffffff;">{{ emp.nama }}</strong></td>
+            {% for krit in saw.kriteria %}
+            <td style="text-align: center; font-weight: 700; color: #66c0f4; font-family: 'JetBrains Mono', monospace;">
+              {{ saw.matriks_r[emp.id][krit.id] }}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- LANGKAH 3: BOBOT & TOTAL NILAI AKHIR -->
+<div class="card">
+  <div class="card-header">
+    <div>
+      <h3 style="color: #ffffff;"><span class="step-badge">3</span> Kontribusi Bobot & Skor Akhir Kinerja</h3>
+      <p>Total perolehan skor akhir yang dihitung berdasarkan akumulasi nilai dan bobot kriteria</p>
+    </div>
+  </div>
+  <div class="card-body">
+    <!-- Rincian Bobot -->
+    <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px;">
+      {% for krit in saw.kriteria %}
+      <div
+        style="background: #101924; padding: 10px 16px; border-radius: 8px; border: 1px solid #22354a;">
+        <span style="font-weight: 700; color: var(--primary-light); font-family: 'JetBrains Mono', monospace;">{{ krit.kode }}</span>
+        <span style="color: #ffffff; font-weight: 600; margin-left: 4px;">({{ krit.nama }}):</span>
+        <span style="font-weight: 700; margin-left: 6px; color: #3dd68c;">w = {{ (saw.bobot_normal[krit.id])|round(4) }} ({{ (saw.bobot_normal[krit.id] * 100)|round(1) }}%)</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th style="width: 50px;">No</th>
+            <th>Alternatif / Karyawan</th>
+            {% for krit in saw.kriteria %}
+            <th style="text-align: center;">{{ krit.kode }} &times; w</th>
+            {% endfor %}
+            <th style="text-align: center; background: rgba(26, 159, 255, 0.15); color: #66c0f4; width: 150px;">Skor Akhir</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in saw.hasil_akhir %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong style="color: #ffffff;">{{ item.karyawan.nama }}</strong></td>
+            {% for krit in saw.kriteria %}
+            <td style="text-align: center; font-size: 0.85rem; color: #8ba2b9; font-family: 'JetBrains Mono', monospace;">
+              {{ item.rincian_v[krit.id] }}
+            </td>
+            {% endfor %}
+            <td
+              style="text-align: center; background: rgba(26, 159, 255, 0.12); font-weight: 800; color: #66c0f4; font-size: 1.05rem; font-family: 'JetBrains Mono', monospace;">
+              {{ item.skor }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="card">
+  <div class="card-body" style="text-align: center; padding: 56px 24px; color: var(--text-muted);">
+    <i class="fa-solid fa-calculator" style="font-size: 3.5rem; margin-bottom: 16px; color: #22354a;"></i>
+    <h3 style="color: #ffffff;">Data Belum Siap Ditampilkan</h3>
+    <p style="margin-top: 6px;">Silakan pastikan data Karyawan dan Kriteria sudah diinput agar proses evaluasi kinerja dapat ditampilkan.</p>
+    <div style="margin-top: 20px;">
+      <a href="{{ url_for('karyawan') }}" class="btn btn-primary btn-sm">Ke Halaman Data Karyawan</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentRankFilter = 'all';
+
+    function filterHasilKategori(kategori) {
+        currentRankFilter = kategori;
+
+        const btnAll = document.getElementById('btnRankAll');
+        const btnTop3 = document.getElementById('btnRankTop3');
+        const btnTop10 = document.getElementById('btnRankTop10');
+
+        if (btnAll && btnTop3 && btnTop10) {
+            btnAll.style.borderColor = kategori === 'all' ? 'var(--cyan-accent)' : 'transparent';
+            btnAll.style.color = kategori === 'all' ? 'var(--cyan-accent)' : '#d1dce5';
+
+            btnTop3.style.borderColor = kategori === 'top3' ? '#fbbf24' : 'transparent';
+            btnTop3.style.color = kategori === 'top3' ? '#fbbf24' : '#d1dce5';
+
+            btnTop10.style.borderColor = kategori === 'top10' ? 'var(--cyan-accent)' : 'transparent';
+            btnTop10.style.color = kategori === 'top10' ? 'var(--cyan-accent)' : '#d1dce5';
+        }
+
+        filterHasilRankingTable();
+    }
+
+    function filterHasilRankingTable() {
+        const query = (document.getElementById('searchHasilRankingInput')?.value || '').toLowerCase().trim();
+        const rows = document.querySelectorAll('.hasil-rank-row');
+        const noResults = document.getElementById('noResultsHasilRow');
+        const counter = document.getElementById('counterHasilRanking');
+
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const rank = parseInt(row.getAttribute('data-rank') || '0', 10);
+            const textContent = row.textContent.toLowerCase();
+
+            const matchesQuery = !query || textContent.includes(query);
+            let matchesCategory = true;
+            if (currentRankFilter === 'top3') {
+                matchesCategory = rank <= 3;
+            } else if (currentRankFilter === 'top10') {
+                matchesCategory = rank <= 10;
+            }
+
+            if (matchesQuery && matchesCategory) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (noResults) {
+            noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        if (counter) {
+            counter.textContent = `Menampilkan ${visibleCount} dari ${rows.length} peringkat`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        filterHasilRankingTable();
+    });
+</script>
+{% endblock %}

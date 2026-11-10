@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Perfomax{% endblock %}
+{% block page_heading %}Dashboard Eksekutif{% endblock %}
+{% block page_subheading %}Sistem Evaluasi & Penilaian Kinerja Karyawan{% endblock %}
+
+{% block topbar_actions %}
+{% if session.get('role') == 'admin' %}
+<form action="{{ url_for('reset_data') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin me-reset database ke data default?');" style="display:inline;">
+    <button type="submit" class="btn btn-secondary btn-sm" title="Kembalikan ke data contoh default">
+        <i class="fa-solid fa-rotate-left"></i> Reset Demo
+    </button>
+</form>
+{% endif %}
+<a href="{{ url_for('hasil') }}" class="btn btn-primary btn-sm">
+    <i class="fa-solid fa-trophy"></i> Lihat Ranking Lengkap
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- 1. Executive Tech Stat Cards -->
+<div class="grid-stats">
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">Total Karyawan</div>
+            <div class="stat-value">{{ total_karyawan }}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                <span style="color: var(--purple-atasan); font-weight: 700;">{{ total_atasan }} Atasan</span> &bull; 
+                <span>{{ total_staff }} Staff</span>
+            </div>
+        </div>
+        <div class="stat-icon primary">
+            <i class="fa-solid fa-users"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">Kriteria Penilaian</div>
+            <div class="stat-value">{{ total_kriteria }}</div>
+            <div style="font-size: 0.75rem; color: var(--cyan-accent); margin-top: 4px;">
+                <i class="fa-solid fa-circle-check"></i> &sum; W = 100% (Normal)
+            </div>
+        </div>
+        <div class="stat-icon secondary">
+            <i class="fa-solid fa-sliders"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">Nilai Terinput</div>
+            <div class="stat-value">{{ total_penilaian }}</div>
+            <div style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">
+                <i class="fa-solid fa-database"></i> Penilaian Lengkap
+            </div>
+        </div>
+        <div class="stat-icon success">
+            <i class="fa-solid fa-check-double"></i>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <div class="stat-label">Skor Tertinggi</div>
+            <div class="stat-value" style="color: var(--cyan-accent);">{{ skor_tertinggi }}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                Rata-rata: <strong style="color: #ffffff;">{{ skor_rata_rata }}</strong>
+            </div>
+        </div>
+        <div class="stat-icon warning">
+            <i class="fa-solid fa-crown" style="color: #fbbf24;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Visualisasi Grafik Kinerja Karyawan (Steam Dark Theme) -->
+<div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 20px; margin-bottom: 24px;">
+    <!-- Grafik 1: Bar Chart Top Karyawan -->
+    <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div>
+                <h3><i class="fa-solid fa-chart-simple" style="color: var(--cyan-accent);"></i> Top 10 Kinerja Karyawan Terbaik</h3>
+                <p>Visualisasi perolehan nilai kinerja 10 karyawan terbaik</p>
+            </div>
+            <span class="badge" style="background: rgba(26, 159, 255, 0.15); color: var(--cyan-accent); border: 1px solid rgba(102, 192, 244, 0.3);">
+                Live Analytics
+            </span>
+        </div>
+        <div class="card-body" style="padding: 16px 20px;">
+            <div style="position: relative; height: 280px; width: 100%;">
+                <canvas id="chartTopKaryawan"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafik 2: Doughnut Bobot Kriteria -->
+    <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div>
+                <h3><i class="fa-solid fa-chart-pie" style="color: #38bdf8;"></i> Proporsi Bobot Kriteria</h3>
+                <p>Distribusi persentase bobot tiap parameter</p>
+            </div>
+        </div>
+        <div class="card-body" style="padding: 16px 20px;">
+            <div style="position: relative; height: 280px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                <canvas id="chartBobotKriteria"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Top 3 Podium Karyawan Terbaik -->
+<div class="card">
+    <div class="card-header">
+        <div>
+            <h3><i class="fa-solid fa-medal" style="color: #f59e0b;"></i> Podium 3 Karyawan Berkinerja Terbaik</h3>
+            <p>Hasil perolehan nilai evaluasi kinerja karyawan terbaik</p>
+        </div>
+        <a href="{{ url_for('hasil') }}" class="btn btn-secondary btn-sm">
+            Lihat Hasil & Peringkat Lengkap <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+    <div class="card-body">
+        {% if top_karyawan %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 20px;">
+                {% for item in top_karyawan %}
+                <div class="podium-card podium-card-{{ item.ranking }}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div>
+                            {% if item.ranking == 1 %}
+                                <span class="badge badge-rank-1"><i class="fa-solid fa-crown"></i> Juara 1</span>
+                            {% elif item.ranking == 2 %}
+                                <span class="badge badge-rank-2"><i class="fa-solid fa-medal"></i> Juara 2</span>
+                            {% elif item.ranking == 3 %}
+                                <span class="badge badge-rank-3"><i class="fa-solid fa-award"></i> Juara 3</span>
+                            {% endif %}
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-muted); margin-left: 8px;">{{ item.karyawan.nik }}</span>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Skor Akhir</div>
+                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--cyan-accent); font-family: 'JetBrains Mono', monospace;">{{ item.skor }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0 0 4px 0;">{{ item.karyawan.nama }}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">{{ item.karyawan.jabatan }} &bull; <span style="color: var(--cyan-accent);">{{ item.karyawan.divisi }}</span></p>
+                    </div>
+                    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Keputusan:</span>
+                        <span class="badge" style="background: rgba(61, 214, 140, 0.15); color: #3dd68c; border: 1px solid rgba(61, 214, 140, 0.35);">
+                            <i class="fa-solid fa-check"></i> Sangat Direkomendasikan
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                <i class="fa-solid fa-folder-open" style="font-size: 2.8rem; margin-bottom: 12px; color: #25394e;"></i>
+                <p>Belum ada data penilaian untuk dihitung. Silakan lakukan input penilaian karyawan.</p>
+                <div style="margin-top: 14px;">
+                    <a href="{{ url_for('penilaian') }}" class="btn btn-primary btn-sm">Ke Matriks Penilaian</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 4. Panduan Alur Penggunaan Sistem -->
+<div class="info-box">
+    <h4><i class="fa-solid fa-circle-nodes" style="color: var(--cyan-accent);"></i> Alur Cepat Penggunaan Sistem</h4>
+    <p>
+        Panduan langkah operasional untuk mengevaluasi kinerja karyawan hingga pencetakan laporan:
+    </p>
+    <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+        <div style="background: #111a26; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <strong style="color: var(--cyan-accent); font-size: 0.85rem;"><i class="fa-solid fa-1"></i> Data Karyawan</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                Tambahkan data secara manual atau impor spreadsheet massal (hingga 300+ baris).
+            </p>
+        </div>
+        <div style="background: #111a26; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <strong style="color: #3dd68c; font-size: 0.85rem;"><i class="fa-solid fa-2"></i> Input Nilai</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                Atasan memasukkan skor kinerja (skala 1-100) pada menu Matriks Penilaian.
+            </p>
+        </div>
+        <div style="background: #111a26; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <strong style="color: #fbbf24; font-size: 0.85rem;"><i class="fa-solid fa-3"></i> Peringkat Otomatis</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                Sistem mengkalkulasi skor akhir dan langsung menyusun peringkat karyawan terbaik.
+            </p>
+        </div>
+        <div style="background: #111a26; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <strong style="color: var(--purple-atasan); font-size: 0.85rem;"><i class="fa-solid fa-4"></i> Laporan & Cetak</strong>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;">
+                Lihat rincian lengkap, ekspor dokumen, atau cetak laporan PDF evaluasi kinerja.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const labels = {{ chart_labels|tojson|safe }};
+        const scores = {{ chart_scores|tojson|safe }};
+        const nips = {{ chart_nips|tojson|safe }};
+        const kriteriaLabels = {{ kriteria_labels|tojson|safe }};
+        const kriteriaWeights = {{ kriteria_weights|tojson|safe }};
+
+        // 1. Bar Chart Top Karyawan (Steam Electric Blue)
+        const ctxBar = document.getElementById('chartTopKaryawan');
+        if (ctxBar && labels.length > 0) {
+            const gradient = ctxBar.getContext('2d').createLinearGradient(0, 0, 0, 260);
+            gradient.addColorStop(0, '#66c0f4');
+            gradient.addColorStop(1, '#005bb5');
+
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Skor Kinerja',
+                        data: scores,
+                        backgroundColor: gradient,
+                        borderColor: '#66c0f4',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#1a9fff',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#141f2d',
+                            borderColor: '#2b425b',
+                            borderWidth: 1,
+                            titleColor: '#ffffff',
+                            bodyColor: '#66c0f4',
+                            padding: 10,
+                            callbacks: {
+                                title: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    return `${labels[idx]} (${nips[idx]})`;
+                                },
+                                label: function(context) {
+                                    return ` Skor Kinerja: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#8ba2b9',
+                                font: { size: 11, family: 'Plus Jakarta Sans' },
+                                maxRotation: 30,
+                                minRotation: 0,
+                                callback: function(value, index) {
+                                    const name = labels[index] || '';
+                                    return name.length > 12 ? name.substring(0, 10) + '..' : name;
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 1.0,
+                            grid: { color: 'rgba(34, 53, 74, 0.6)' },
+                            ticks: {
+                                color: '#8ba2b9',
+                                font: { size: 10, family: 'JetBrains Mono' },
+                                stepSize: 0.2
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 2. Doughnut Chart Kriteria (Tech Palette)
+        const ctxPie = document.getElementById('chartBobotKriteria');
+        if (ctxPie && kriteriaLabels.length > 0) {
+            new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: kriteriaLabels,
+                    datasets: [{
+                        data: kriteriaWeights,
+                        backgroundColor: [
+                            '#1a9fff',
+                            '#3dd68c',
+                            '#fbbf24',
+                            '#ff5252',
+                            '#a78bfa',
+                            '#38bdf8'
+                        ],
+                        borderColor: '#172433',
+                        borderWidth: 2,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#8ba2b9',
+                                boxWidth: 12,
+                                padding: 12,
+                                font: { size: 11, family: 'Plus Jakarta Sans' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#141f2d',
+                            borderColor: '#2b425b',
+                            borderWidth: 1,
+                            titleColor: '#ffffff',
+                            bodyColor: '#66c0f4',
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Bobot: ${context.parsed}%`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
