@@ -523,7 +523,7 @@ export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onTo
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <button onClick={() => setModalTambah(true)} className="btn btn-primary btn-sm">
               <Plus size={15} />
               <span>Tambah Karyawan</span>
@@ -531,14 +531,6 @@ export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onTo
             <button onClick={() => setModalImport(true)} className="btn btn-secondary btn-sm">
               <Upload size={15} />
               <span>Import CSV (300+)</span>
-            </button>
-            <button onClick={handleDownloadTemplateExcel} className="btn btn-secondary btn-sm" title="Unduh template Excel untuk input penambahan karyawan">
-              <FileSpreadsheet size={15} color="#3dd68c" />
-              <span>Template Excel</span>
-            </button>
-            <button onClick={handleDownloadTemplateCsv} className="btn btn-secondary btn-sm" title="Unduh template CSV untuk input penambahan karyawan">
-              <FileSpreadsheet size={15} color="#66c0f4" />
-              <span>Template CSV</span>
             </button>
             <button onClick={() => setModalGenerate(true)} className="btn btn-secondary btn-sm">
               <KeyRound size={15} />
@@ -713,31 +705,6 @@ export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onTo
             </div>
             <form onSubmit={handleTambah}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div style={{
-                  background: 'rgba(26, 159, 255, 0.08)',
-                  border: '1px solid rgba(26, 159, 255, 0.25)',
-                  borderRadius: '6px',
-                  padding: '10px 14px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexWrap: 'wrap',
-                  gap: '10px'
-                }}>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    Ingin menambah banyak karyawan sekaligus (hingga 300+)?
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => { setModalTambah(false); setModalImport(true) }}
-                    className="btn btn-secondary btn-sm"
-                    style={{ fontSize: '0.72rem', padding: '4px 8px' }}
-                  >
-                    <Upload size={13} />
-                    <span>Gunakan Import CSV/Excel</span>
-                  </button>
-                </div>
-
                 <div>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
                     Nomor Induk Karyawan (NIK)
