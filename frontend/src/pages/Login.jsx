@@ -131,7 +131,7 @@ export default function Login({ onOpenSupabaseConfig }) {
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-          Perfomax Enterprise &bull; Sistem Evaluasi &amp; Penilaian Kinerja Karyawan
+          Perfomax &bull; Sistem Evaluasi &amp; Penilaian Kinerja Karyawan
         </div>
       </div>
     </div>

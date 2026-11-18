@@ -33,13 +33,8 @@ export default function Sidebar({ currentPage, onNavigate, onOpenChangePassword 
           }}>
             <Shield size={20} color="#fff" />
           </div>
-          <div>
-            <div style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.04em', color: '#fff' }}>
-              PERFOMAX
-            </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Enterprise SPK
-            </div>
+          <div style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.04em', color: '#fff' }}>
+            PERFOMAX
           </div>
         </div>
       </div>
