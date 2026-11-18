@@ -134,6 +134,7 @@ function MainLayout() {
           {currentPage === 'karyawan' && (
             <Karyawan
               karyawan={karyawan}
+              kriteria={kriteria}
               onRefresh={fetchData}
               onToast={addToast}
             />

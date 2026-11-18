@@ -18,7 +18,7 @@ import * as XLSX from 'xlsx'
 import { getSupabase } from '../lib/supabase'
 import { hashPassword, generateRandomPassword } from '../lib/auth'
 
-export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
+export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onToast }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterDivisi, setFilterDivisi] = useState('')
   const [filterRole, setFilterRole] = useState('')
@@ -180,6 +180,109 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
     onToast('File Excel berhasil diunduh!', 'success')
   }
 
+  // Unduh Template Excel untuk penambahan karyawan
+  const handleDownloadTemplateExcel = () => {
+    const sampleRows = [
+      {
+        NIK: 'EMP0309',
+        'Nama Lengkap': 'Ahmad Pratama',
+        Jabatan: 'Engineering Manager',
+        Divisi: 'IT & Development',
+        Role: 'atasan'
+      },
+      {
+        NIK: 'EMP0310',
+        'Nama Lengkap': 'Citra Lestari',
+        Jabatan: 'Senior Programmer',
+        Divisi: 'IT & Development',
+        Role: 'karyawan'
+      },
+      {
+        NIK: 'EMP0311',
+        'Nama Lengkap': 'Budi Santoso',
+        Jabatan: 'Finance Manager',
+        Divisi: 'Finance & Accounting',
+        Role: 'atasan'
+      },
+      {
+        NIK: 'EMP0312',
+        'Nama Lengkap': 'Dewi Anggraeni',
+        Jabatan: 'Marketing Specialist',
+        Divisi: 'Marketing & Sales',
+        Role: 'karyawan'
+      },
+      {
+        NIK: 'EMP0313',
+        'Nama Lengkap': 'Eko Wicaksono',
+        Jabatan: 'Quality Assurance',
+        Divisi: 'IT & Development',
+        Role: 'karyawan'
+      }
+    ]
+
+    // Jika ada kriteria, sertakan kolom kriteria sebagai opsi penilaian
+    if (kriteria && kriteria.length > 0) {
+      const sampleScores = [
+        [85, 90, 88, 5, 85],
+        [90, 85, 92, 4, 80],
+        [80, 82, 75, 8, 78],
+        [95, 88, 85, 2, 90],
+        [88, 86, 80, 6, 82]
+      ]
+      sampleRows.forEach((row, idx) => {
+        kriteria.forEach((k, kIdx) => {
+          row[k.kode] = sampleScores[idx % sampleScores.length][kIdx % 5] || 80
+        })
+      })
+    }
+
+    const ws = XLSX.utils.json_to_sheet(sampleRows)
+    ws['!cols'] = [
+      { wch: 14 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 14 },
+      ...(kriteria || []).map(() => ({ wch: 10 }))
+    ]
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Template Karyawan')
+    XLSX.writeFile(wb, 'template_penambahan_karyawan.xlsx')
+    onToast('Template Excel penambahan karyawan berhasil diunduh!', 'success')
+  }
+
+  // Unduh Template CSV untuk penambahan karyawan
+  const handleDownloadTemplateCsv = () => {
+    let headerList = ['NIK', 'Nama Lengkap', 'Jabatan', 'Divisi', 'Role']
+    if (kriteria && kriteria.length > 0) {
+      kriteria.forEach(k => headerList.push(k.kode))
+    }
+
+    const sampleRows = [
+      ['EMP0309', 'Ahmad Pratama', 'Engineering Manager', 'IT & Development', 'atasan', 85, 90, 88, 5, 85],
+      ['EMP0310', 'Citra Lestari', 'Senior Programmer', 'IT & Development', 'karyawan', 90, 85, 92, 4, 80],
+      ['EMP0311', 'Budi Santoso', 'Finance Manager', 'Finance & Accounting', 'atasan', 80, 82, 75, 8, 78],
+      ['EMP0312', 'Dewi Anggraeni', 'Marketing Specialist', 'Marketing & Sales', 'karyawan', 95, 88, 85, 2, 90],
+      ['EMP0313', 'Eko Wicaksono', 'Quality Assurance', 'IT & Development', 'karyawan', 88, 86, 80, 6, 82]
+    ]
+
+    const lines = [headerList.join(',')]
+    sampleRows.forEach(row => {
+      lines.push(row.slice(0, headerList.length).join(','))
+    })
+
+    const csvContent = lines.join('\n')
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'template_penambahan_karyawan.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    onToast('Template CSV penambahan karyawan berhasil diunduh!', 'success')
+  }
+
   // Handle CSV file selection
   const handleCsvSelect = (e) => {
     const file = e.target.files[0]
@@ -215,31 +318,99 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
           const rawRows = XLSX.utils.sheet_to_json(ws)
 
           const toInsert = []
+          const scoresToInsert = []
+
           rawRows.forEach(row => {
-            const nik = row.nik || row.NIK || row.NIP || row.nip || ''
-            const nama = row.nama || row.Nama || row.NAMA || ''
-            const jabatan = row.jabatan || row.Jabatan || row.JABATAN || ''
-            const divisi = row.divisi || row.Divisi || row.DIVISI || ''
-            const role = (row.role || row.Role || 'karyawan').toLowerCase()
+            let nik = ''
+            let nama = ''
+            let jabatan = 'Staff'
+            let divisi = 'Umum'
+            let role = 'karyawan'
+
+            // Cek variasi nama header
+            Object.entries(row).forEach(([key, val]) => {
+              const kClean = key.trim().toLowerCase()
+              const vStr = String(val ?? '').trim()
+              if (['nik', 'nip', 'nomor induk', 'no induk', 'id karyawan'].includes(kClean)) {
+                nik = vStr
+              } else if (['nama', 'nama lengkap', 'karyawan'].includes(kClean)) {
+                nama = vStr
+              } else if (['jabatan', 'posisi', 'role pekerjaan'].includes(kClean)) {
+                jabatan = vStr || 'Staff'
+              } else if (['divisi', 'departemen', 'dept', 'bagian', 'unit'].includes(kClean)) {
+                divisi = vStr || 'Umum'
+              } else if (['role', 'peran', 'tipe role', 'hak akses'].includes(kClean)) {
+                role = vStr.toLowerCase() === 'atasan' ? 'atasan' : 'karyawan'
+              }
+            })
+
+            // Fallback direct key checks
+            if (!nik) nik = row.nik || row.NIK || row.NIP || row.nip || ''
+            if (!nama) nama = row.nama || row.Nama || row['Nama Lengkap'] || row['nama lengkap'] || row.NAMA || ''
+            if (!jabatan || jabatan === 'Staff') jabatan = row.jabatan || row.Jabatan || row.JABATAN || 'Staff'
+            if (!divisi || divisi === 'Umum') divisi = row.divisi || row.Divisi || row.DIVISI || 'Umum'
+            if (role === 'karyawan' && (row.role || row.Role)) {
+              role = String(row.role || row.Role).toLowerCase() === 'atasan' ? 'atasan' : 'karyawan'
+            }
 
             if (nik && nama) {
+              const cleanNik = String(nik).trim()
               toInsert.push({
-                nik: String(nik).trim(),
+                nik: cleanNik,
                 nama: String(nama).trim(),
                 jabatan: String(jabatan).trim() || 'Staff',
                 divisi: String(divisi).trim() || 'Umum',
                 role: role === 'atasan' ? 'atasan' : 'karyawan'
               })
+
+              // Cek jika ada nilai kriteria yang disertakan
+              if (kriteria && kriteria.length > 0) {
+                kriteria.forEach(k => {
+                  const scoreEntry = Object.entries(row).find(([key]) => {
+                    const kLower = key.trim().toLowerCase()
+                    return kLower === k.kode.toLowerCase() || kLower.startsWith(`${k.kode.toLowerCase()} `) || kLower.startsWith(`${k.kode.toLowerCase()}(`) || kLower.includes(`(${k.kode.toLowerCase()})`)
+                  })
+                  if (scoreEntry && !isNaN(Number(scoreEntry[1]))) {
+                    scoresToInsert.push({
+                      nik: cleanNik,
+                      kriteria_id: k.id,
+                      nilai: Number(scoreEntry[1])
+                    })
+                  }
+                })
+              }
             }
           })
 
           if (toInsert.length === 0) {
-            throw new Error('Tidak ada baris data valid ditemukan di file CSV.')
+            throw new Error('Tidak ada baris data valid ditemukan di file CSV/Excel.')
           }
 
-          // Upsert or insert batch
-          const { error } = await client.from('karyawan').upsert(toInsert, { onConflict: 'nik' })
+          // Upsert data karyawan ke Supabase
+          const { data: upsertedKaryawan, error } = await client
+            .from('karyawan')
+            .upsert(toInsert, { onConflict: 'nik' })
+            .select('id, nik')
+
           if (error) throw error
+
+          // Simpan nilai kriteria jika ada di file
+          if (scoresToInsert.length > 0 && upsertedKaryawan) {
+            const nikToIdMap = {}
+            upsertedKaryawan.forEach(k => { nikToIdMap[k.nik] = k.id })
+
+            const formattedScores = scoresToInsert
+              .filter(s => nikToIdMap[s.nik])
+              .map(s => ({
+                karyawan_id: nikToIdMap[s.nik],
+                kriteria_id: s.kriteria_id,
+                nilai: s.nilai
+              }))
+
+            if (formattedScores.length > 0) {
+              await client.from('penilaian').upsert(formattedScores, { onConflict: 'karyawan_id,kriteria_id' }).catch(() => {})
+            }
+          }
 
           onToast(`Berhasil mengimpor ${toInsert.length} data karyawan!`, 'success')
           setModalImport(false)
@@ -352,7 +523,7 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <button onClick={() => setModalTambah(true)} className="btn btn-primary btn-sm">
               <Plus size={15} />
               <span>Tambah Karyawan</span>
@@ -360,6 +531,14 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
             <button onClick={() => setModalImport(true)} className="btn btn-secondary btn-sm">
               <Upload size={15} />
               <span>Import CSV (300+)</span>
+            </button>
+            <button onClick={handleDownloadTemplateExcel} className="btn btn-secondary btn-sm" title="Unduh template Excel untuk input penambahan karyawan">
+              <FileSpreadsheet size={15} color="#3dd68c" />
+              <span>Template Excel</span>
+            </button>
+            <button onClick={handleDownloadTemplateCsv} className="btn btn-secondary btn-sm" title="Unduh template CSV untuk input penambahan karyawan">
+              <FileSpreadsheet size={15} color="#66c0f4" />
+              <span>Template CSV</span>
             </button>
             <button onClick={() => setModalGenerate(true)} className="btn btn-secondary btn-sm">
               <KeyRound size={15} />
@@ -534,6 +713,31 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
             </div>
             <form onSubmit={handleTambah}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{
+                  background: 'rgba(26, 159, 255, 0.08)',
+                  border: '1px solid rgba(26, 159, 255, 0.25)',
+                  borderRadius: '6px',
+                  padding: '10px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '10px'
+                }}>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Ingin menambah banyak karyawan sekaligus (hingga 300+)?
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setModalTambah(false); setModalImport(true) }}
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+                  >
+                    <Upload size={13} />
+                    <span>Gunakan Import CSV/Excel</span>
+                  </button>
+                </div>
+
                 <div>
                   <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
                     Nomor Induk Karyawan (NIK)
@@ -693,15 +897,62 @@ export default function Karyawan({ karyawan = [], onRefresh, onToast }) {
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                Pilih file CSV atau Excel yang berisi kolom: <code>nik</code>, <code>nama</code>, <code>jabatan</code>, <code>divisi</code>, <code>role</code> (opsional: karyawan/atasan). Mendukung impor hingga 300+ baris sekaligus.
+                Unggah file CSV atau Excel yang berisi data karyawan (mendukung impor hingga 300+ baris sekaligus). Sistem akan otomatis mengenali kolom data.
               </div>
 
-              <input
-                type="file"
-                accept=".csv, .xlsx, .xls"
-                onChange={handleCsvSelect}
-                className="input-steam"
-              />
+              {/* Unduh Template Box */}
+              <div style={{
+                background: 'rgba(26, 159, 255, 0.08)',
+                border: '1px solid rgba(26, 159, 255, 0.25)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '10px'
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff' }}>
+                    📋 Unduh Template Format Karyawan
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Gunakan file template ini sebagai acuan format penambahan data (NIK, Nama, Jabatan, Divisi, Role)
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={handleDownloadTemplateExcel}
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '0.78rem', padding: '6px 10px' }}
+                  >
+                    <FileSpreadsheet size={14} color="#3dd68c" />
+                    <span>Template Excel (.xlsx)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDownloadTemplateCsv}
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '0.78rem', padding: '6px 10px' }}
+                  >
+                    <FileSpreadsheet size={14} color="#66c0f4" />
+                    <span>Template CSV (.csv)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '6px' }}>
+                  Pilih File Spreadsheet:
+                </label>
+                <input
+                  type="file"
+                  accept=".csv, .xlsx, .xls"
+                  onChange={handleCsvSelect}
+                  className="input-steam"
+                />
+              </div>
 
               {csvPreview.length > 0 && (
                 <div>
