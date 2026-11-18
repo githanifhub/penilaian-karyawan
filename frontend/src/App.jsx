@@ -52,8 +52,8 @@ function MainLayout() {
         { data: rawKriteria, error: errC },
         { data: rawPenilaian, error: errP }
       ] = await Promise.all([
-        client.from('karyawan').select('*').order('id', { ascending: true }),
-        client.from('kriteria').select('*').order('kode', { ascending: true }),
+        client.from('karyawan').select('*').order('id', { ascending: false }),
+        client.from('kriteria').select('*').order('id', { ascending: false }),
         client.from('penilaian').select('*')
       ])
 
