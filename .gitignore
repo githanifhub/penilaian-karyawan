@@ -9,6 +9,12 @@ env/
 ENV/
 .venv/
 
+# Node.js & React Build
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
 # SQLite database local file
 instance/
 *.sqlite3
@@ -22,6 +28,7 @@ instance/
 # Editor & IDE files
 .vscode/
 .idea/
+scratch/
 *.swp
 *.swo
 *~
