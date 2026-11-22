@@ -33,15 +33,17 @@ export default function Penilaian({ karyawan = [], kriteria = [], penilaian = []
     return [...kriteria].sort((a, b) => (a.kode || '').localeCompare(b.kode || ''))
   }, [kriteria])
 
-  // Filter Karyawan
+  // Filter Karyawan (Urutkan data terbaru di baris pertama)
   const filteredKaryawan = useMemo(() => {
-    return karyawan.filter(k => {
-      const matchSearch =
-        (k.nik || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (k.nama || '').toLowerCase().includes(searchTerm.toLowerCase())
-      const matchDivisi = !filterDivisi || k.divisi === filterDivisi
-      return matchSearch && matchDivisi
-    })
+    return karyawan
+      .filter(k => {
+        const matchSearch =
+          (k.nik || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (k.nama || '').toLowerCase().includes(searchTerm.toLowerCase())
+        const matchDivisi = !filterDivisi || k.divisi === filterDivisi
+        return matchSearch && matchDivisi
+      })
+      .sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0))
   }, [karyawan, searchTerm, filterDivisi])
 
   // Pagination Karyawan

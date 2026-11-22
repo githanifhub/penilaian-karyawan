@@ -52,20 +52,22 @@ export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onTo
     return Array.from(s).sort()
   }, [karyawan])
 
-  // Filter & Search
+  // Filter & Search (Urutkan karyawan terbaru di posisi paling atas / baris pertama)
   const filteredKaryawan = useMemo(() => {
-    return karyawan.filter(k => {
-      const matchSearch =
-        (k.nik || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (k.nama || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (k.jabatan || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (k.divisi || '').toLowerCase().includes(searchTerm.toLowerCase())
+    return karyawan
+      .filter(k => {
+        const matchSearch =
+          (k.nik || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (k.nama || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (k.jabatan || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (k.divisi || '').toLowerCase().includes(searchTerm.toLowerCase())
 
-      const matchDivisi = !filterDivisi || k.divisi === filterDivisi
-      const matchRole = !filterRole || (k.role || 'karyawan') === filterRole
+        const matchDivisi = !filterDivisi || k.divisi === filterDivisi
+        const matchRole = !filterRole || (k.role || 'karyawan') === filterRole
 
-      return matchSearch && matchDivisi && matchRole
-    })
+        return matchSearch && matchDivisi && matchRole
+      })
+      .sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0))
   }, [karyawan, searchTerm, filterDivisi, filterRole])
 
   // Pagination

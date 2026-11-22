@@ -32,6 +32,11 @@ export default function Kriteria({ kriteria = [], onRefresh, onToast }) {
     return Math.round(kriteria.reduce((acc, k) => acc + (parseFloat(k.bobot) || 0), 0) * 100) / 100
   }, [kriteria])
 
+  // Urutkan kriteria terbaru di posisi paling atas (baris pertama)
+  const sortedKriteria = useMemo(() => {
+    return [...kriteria].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0))
+  }, [kriteria])
+
   const isValidBobot = Math.abs(totalBobot - 1.0) < 0.001 || Math.abs(totalBobot - 100) < 0.1
 
   const openTambah = () => {
@@ -170,7 +175,7 @@ export default function Kriteria({ kriteria = [], onRefresh, onToast }) {
             </tr>
           </thead>
           <tbody>
-            {kriteria.map((k) => {
+            {sortedKriteria.map((k) => {
               const b = parseFloat(k.bobot) || 0
               const pct = totalBobot > 0 ? Math.round((b / totalBobot) * 1000) / 10 : 0
               return (
