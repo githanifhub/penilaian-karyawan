@@ -27,8 +27,8 @@ export default function Pagination({
     }
   }
 
-  // Generate pagination items matching the user's reference image:
-  // e.g. < 1 2 3 4 5 6 ... 140 > Go to [ 1 ]
+  // Generate pagination items matching the user's reference:
+  // e.g. < 1 2 3 4 5 6 ... 140 >
   const getPageNumbers = () => {
     if (totalPages <= 7) {
       const pages = []
@@ -55,12 +55,12 @@ export default function Pagination({
       alignItems: 'center',
       justifyContent: 'space-between',
       flexWrap: 'wrap',
-      gap: '14px',
+      gap: '16px',
       padding: '12px 4px',
       fontSize: '0.85rem',
       color: 'var(--text-muted)'
     }}>
-      {/* Dropdown Jumlah Baris: "[ 10 Baris  v ]" (Sesuai Gambar Sisi Kiri) */}
+      {/* 1. SISI KIRI: Dropdown Jumlah Baris "[ 10 Baris  v ]" */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <select
           value={pageSize}
@@ -88,13 +88,53 @@ export default function Pagination({
         </select>
       </div>
 
-      {/* Nomor Halaman & Go to (Sesuai Gambar Sisi Kanan) */}
+      {/* 2. SISI TENGAH: Fitur Lompat Halaman ("Go to [ 1 ]") */}
+      {pageSize !== 'all' && totalPages > 1 ? (
+        <form
+          onSubmit={handleGoToSubmit}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'rgba(255, 255, 255, 0.03)',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
+          }}
+        >
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Go to</span>
+          <input
+            type="number"
+            min="1"
+            max={totalPages}
+            value={goToInput}
+            onChange={(e) => setGoToInput(e.target.value)}
+            onBlur={handleGoToSubmit}
+            style={{
+              width: '48px',
+              height: '28px',
+              textAlign: 'center',
+              padding: '2px 4px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              background: 'var(--surface-alt)',
+              color: '#ffffff',
+              border: '1px solid var(--border)',
+              borderRadius: '4px',
+              outline: 'none'
+            }}
+          />
+        </form>
+      ) : (
+        <div style={{ flex: 1 }} />
+      )}
+
+      {/* 3. SISI KANAN: Deretan Angka Halaman & Tombol Panah Navigasi */}
       {pageSize !== 'all' && totalPages > 1 && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          flexWrap: 'wrap'
+          gap: '8px'
         }}>
           {/* Tombol Sebelumnya (<) */}
           <button
@@ -193,40 +233,6 @@ export default function Pagination({
           >
             <ChevronRight size={16} />
           </button>
-
-          {/* Input Go to: "Go to [ 1 ]" (Sesuai Gambar) */}
-          <form
-            onSubmit={handleGoToSubmit}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              marginLeft: '6px'
-            }}
-          >
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Go to</span>
-            <input
-              type="number"
-              min="1"
-              max={totalPages}
-              value={goToInput}
-              onChange={(e) => setGoToInput(e.target.value)}
-              onBlur={handleGoToSubmit}
-              style={{
-                width: '46px',
-                height: '30px',
-                textAlign: 'center',
-                padding: '2px 4px',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                background: 'var(--surface-alt)',
-                color: '#ffffff',
-                border: '1px solid var(--border)',
-                borderRadius: '6px',
-                outline: 'none'
-              }}
-            />
-          </form>
         </div>
       )}
     </div>
