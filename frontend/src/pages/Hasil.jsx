@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { Trophy, Search, Download, Printer, Award, FileSpreadsheet, ChevronDown, ChevronRight, User } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import confetti from 'canvas-confetti'
+import Pagination from '../components/Pagination'
 
 export default function Hasil({ data, user }) {
   const { sawResult } = data
@@ -530,30 +531,18 @@ export default function Hasil({ data, user }) {
         </div>
       )}
 
-      {/* Pagination Bar */}
-      {pageSize !== 'all' && totalPages > 1 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px', marginTop: '4px' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Halaman {page} dari {totalPages}
-          </div>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="btn btn-secondary btn-sm"
-            >
-              Sebelumnya
-            </button>
-            <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="btn btn-secondary btn-sm"
-            >
-              Selanjutnya
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Pagination Bar Sesuai Gambar */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize)
+          setPage(1)
+        }}
+        pageSizeOptions={[10, 25, 50, 100, 300, 'all']}
+      />
     </div>
   )
 }

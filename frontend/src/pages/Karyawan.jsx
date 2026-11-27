@@ -17,6 +17,7 @@ import {
 import * as XLSX from 'xlsx'
 import { getSupabase } from '../lib/supabase'
 import { hashPassword, generateRandomPassword } from '../lib/auth'
+import Pagination from '../components/Pagination'
 
 export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onToast }) {
   const [searchTerm, setSearchTerm] = useState('')
@@ -670,30 +671,18 @@ export default function Karyawan({ karyawan = [], kriteria = [], onRefresh, onTo
         </table>
       </div>
 
-      {/* Pagination Bar */}
-      {pageSize !== 'all' && totalPages > 1 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Halaman {page} dari {totalPages}
-          </div>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="btn btn-secondary btn-sm"
-            >
-              Sebelumnya
-            </button>
-            <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="btn btn-secondary btn-sm"
-            >
-              Selanjutnya
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Pagination Bar Sesuai Gambar */}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize)
+          setPage(1)
+        }}
+        pageSizeOptions={[10, 25, 50, 100, 300, 'all']}
+      />
 
       {/* Modal Tambah Karyawan */}
       {modalTambah && (
