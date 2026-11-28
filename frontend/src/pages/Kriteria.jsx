@@ -32,9 +32,16 @@ export default function Kriteria({ kriteria = [], onRefresh, onToast }) {
     return Math.round(kriteria.reduce((acc, k) => acc + (parseFloat(k.bobot) || 0), 0) * 100) / 100
   }, [kriteria])
 
-  // Urutkan kriteria terbaru di posisi paling atas (baris pertama)
+  // Urutkan kriteria dengan bobot/persentase lebih besar di posisi paling atas
   const sortedKriteria = useMemo(() => {
-    return [...kriteria].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0))
+    return [...kriteria].sort((a, b) => {
+      const bobotA = parseFloat(a.bobot) || 0
+      const bobotB = parseFloat(b.bobot) || 0
+      if (bobotB !== bobotA) {
+        return bobotB - bobotA // Bobot / persentase terbesar berada di paling atas
+      }
+      return (a.kode || '').localeCompare(b.kode || '', undefined, { numeric: true })
+    })
   }, [kriteria])
 
   const isValidBobot = Math.abs(totalBobot - 1.0) < 0.001 || Math.abs(totalBobot - 100) < 0.1
