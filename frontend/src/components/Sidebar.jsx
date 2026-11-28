@@ -1,5 +1,5 @@
 import React from 'react'
-import { LayoutDashboard, Users, Sliders, ClipboardCheck, Trophy, LogOut, KeyRound, Shield } from 'lucide-react'
+import { LayoutDashboard, Users, Sliders, ClipboardCheck, Trophy, LogOut, KeyRound, Shield, User } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Sidebar({ currentPage, onNavigate, onOpenChangePassword }) {
@@ -7,6 +7,7 @@ export default function Sidebar({ currentPage, onNavigate, onOpenChangePassword 
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'atasan', 'karyawan'] },
+    { id: 'datadiri', label: 'Data Diri', icon: User, roles: ['admin', 'atasan', 'karyawan'] },
     { id: 'karyawan', label: 'Data Karyawan', icon: Users, roles: ['admin'] },
     { id: 'kriteria', label: 'Kriteria Penilaian', icon: Sliders, roles: ['admin'] },
     { id: 'penilaian', label: 'Input Penilaian', icon: ClipboardCheck, roles: ['admin', 'atasan'] },
@@ -102,7 +103,11 @@ export default function Sidebar({ currentPage, onNavigate, onOpenChangePassword 
 
       {/* User Section Bottom */}
       <div style={{ padding: '16px', borderTop: '1px solid var(--border)', background: 'rgba(14, 20, 27, 0.4)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+        <div
+          onClick={() => onNavigate('datadiri')}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', cursor: 'pointer' }}
+          title="Buka Data Diri & Profil"
+        >
           <div style={{
             width: '38px',
             height: '38px',

@@ -16,6 +16,7 @@ import Karyawan from './pages/Karyawan'
 import Kriteria from './pages/Kriteria'
 import Penilaian from './pages/Penilaian'
 import Hasil from './pages/Hasil'
+import DataDiri from './pages/DataDiri'
 
 function MainLayout() {
   const { user } = useAuth()
@@ -100,6 +101,7 @@ function MainLayout() {
     kriteria: { title: 'Kriteria Penilaian Kinerja', subtitle: 'Atur bobot dan indikator penilaian kinerja (Benefit / Cost)' },
     penilaian: { title: 'Input & Penilaian Kinerja', subtitle: 'Form penilaian berkala karyawan berdasarkan indikator' },
     hasil: { title: 'Hasil & Peringkat Kinerja', subtitle: 'Peringkat akhir evaluasi kinerja karyawan terhitung otomatis' },
+    datadiri: { title: 'Data Diri & Profil Pegawai', subtitle: 'Informasi biodata akun dan formulir pengajuan perubahan data' },
   }
 
   const meta = pageMeta[currentPage] || pageMeta.dashboard
@@ -163,6 +165,16 @@ function MainLayout() {
             <Hasil
               data={{ sawResult }}
               user={user}
+            />
+          )}
+
+          {currentPage === 'datadiri' && (
+            <DataDiri
+              user={user}
+              karyawan={karyawan}
+              onRefresh={fetchData}
+              onOpenChangePassword={() => setShowChangePassword(true)}
+              onToast={addToast}
             />
           )}
         </main>

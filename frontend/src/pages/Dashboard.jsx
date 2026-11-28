@@ -286,42 +286,44 @@ export default function Dashboard({ data, onNavigate, user }) {
         </div>
       )}
 
-      {/* Alur Cepat Penggunaan Sistem */}
-      <div className="steam-card">
-        <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>
-          Alur Cepat Penggunaan Sistem Perfomax
-        </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-          <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 1</div>
-            <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Data Karyawan &amp; Akun</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-              Import CSV atau tambah data karyawan, lalu buatkan akun login untuk akses mandiri.
+      {/* Alur Cepat Penggunaan Sistem (Hanya Ditampilkan untuk Akun Admin) */}
+      {user?.role === 'admin' && (
+        <div className="steam-card">
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>
+            Alur Cepat Penggunaan Sistem Perfomax
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 1</div>
+              <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Data Karyawan &amp; Akun</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                Import CSV atau tambah data karyawan, lalu buatkan akun login untuk akses mandiri.
+              </div>
             </div>
-          </div>
-          <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 2</div>
-            <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Kriteria Penilaian</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-              Tentukan indikator penilaian dan bobot kepentingan (Benefit/Cost) secara fleksibel.
+            <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 2</div>
+              <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Kriteria Penilaian</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                Tentukan indikator penilaian dan bobot kepentingan (Benefit/Cost) secara fleksibel.
+              </div>
             </div>
-          </div>
-          <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 3</div>
-            <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Input Nilai Kinerja</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-              Admin dan Atasan memasukkan skor evaluasi kinerja berkala setiap karyawan.
+            <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 3</div>
+              <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Input Nilai Kinerja</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                Admin dan Atasan memasukkan skor evaluasi kinerja berkala setiap karyawan.
+              </div>
             </div>
-          </div>
-          <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 4</div>
-            <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Peringkat &amp; Ekspor</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-              Sistem menghitung ranking secara otomatis dan siap diekspor ke Excel atau cetak laporan.
+            <div style={{ background: 'var(--surface-alt)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-accent)', textTransform: 'uppercase' }}>Langkah 4</div>
+              <div style={{ fontWeight: 600, color: '#fff', marginTop: '4px' }}>Peringkat &amp; Ekspor</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                Sistem menghitung ranking secara otomatis dan siap diekspor ke Excel atau cetak laporan.
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
